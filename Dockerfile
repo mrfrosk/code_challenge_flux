@@ -1,0 +1,1 @@
+FROM library/openjdk:21-ea-slim-bullseye
