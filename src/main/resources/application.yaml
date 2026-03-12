@@ -1,6 +1,10 @@
 spring:
+  application:
+    name: CodeChallengeFlux
   datasource:
-    url: jdbc:postgresql://localhost:5432/code_challenge_test
+    url: jdbc:postgresql://localhost:5432/test_db
     driver-class-name: org.postgresql.Driver
     username: postgres
-    password: 123
+    password: postgres
+  exposed:
+    generate-ddl: true

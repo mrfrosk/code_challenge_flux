@@ -1,0 +1,13 @@
+package com.code.challenge_flux.data.database.tables
+
+import com.code.challenge_flux.data.challenge_sources.ChallengeSources
+import org.jetbrains.exposed.v1.core.dao.id.java.UUIDTable
+
+object CodeChallengesTable : UUIDTable() {
+    val name = varchar("name", 255)
+    val description = text("description")
+    val challengeSource = enumeration("source", ChallengeSources::class)
+    val difficult = varchar("difficult", 20)
+    val solution = text("solution")
+    val userId = reference("user_id", UsersTable.id)
+}
