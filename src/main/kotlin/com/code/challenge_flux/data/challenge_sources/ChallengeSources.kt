@@ -1,5 +1,11 @@
 package com.code.challenge_flux.data.challenge_sources
 
+import kotlinx.serialization.Serializable
+
+
 enum class ChallengeSources(name: String) {
-    CodeWars("CodeWars"), LeetCode("LeetCode")
+    @Serializable
+    CodeWars("CodeWars"),
+    @Serializable
+    LeetCode("LeetCode")
 }
