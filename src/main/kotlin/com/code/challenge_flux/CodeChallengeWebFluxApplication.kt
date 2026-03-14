@@ -1,4 +1,4 @@
-package com.code.challenge
+package com.code.challenge_flux
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

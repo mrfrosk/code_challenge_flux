@@ -27,7 +27,9 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-docker-compose")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
+    implementation("com.charleskorn.kaml:kaml:${kamlVersion}")
+    developmentOnly("org.springframework.boot:spring-boot-docker-compose")
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")

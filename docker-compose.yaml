@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  app:
+    image: flux-test-image2
+    build:
+      context: .
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8080:8080"
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: test_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+## Все это дерьмо, что закомментировано внести в obsdian с обособой пометкой
+## При глобальных изменениях контейнер надо нахуй удалять из doker desktop, иначе изменения не применяются
+## Походу из за vlomus для postgres, нихрена не работало
+#    volumes:
+#      - postgres_data:/var/lib/postgresql/data
+#volumes:
+#  postgres_data:
