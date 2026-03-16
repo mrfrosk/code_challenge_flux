@@ -82,7 +82,7 @@ class ChallengeController {
         return ResponseEntity.ok(challenge)
     }
 
-    @DeleteMapping("{source}/{username}/{name}")
+    @DeleteMapping("*/{username}/{name}")
     suspend fun deleteCodeWarsChallenge(
         @PathVariable username: String,
         @PathVariable name: String,
