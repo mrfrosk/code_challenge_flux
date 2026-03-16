@@ -83,7 +83,7 @@ class ChallengeControllerTest {
     @OptIn(InternalAPI::class)
     @Test
     fun createChallengeTest(): Unit = runBlocking {
-        val request = client.post("$address/codewars/${user1.username}") {
+        val request = client.post("$address/CodeWars/${user1.username}") {
             body = Json.encodeToString(codeChallenge1)
         }.bodyAsText()
 
@@ -98,7 +98,7 @@ class ChallengeControllerTest {
 
     @Test
     fun getCodeChallenge(): Unit = runBlocking {
-        val request = client.get("$address/codewars/${user1.username}/${codeChallenge.name}"){
+        val request = client.get("$address/CodeWars/${user1.username}/${codeChallenge.name}"){
         }.bodyAsText()
         val challenge = Json.decodeFromString<CodeChallengeDto>(request)
         assertEquals(codeChallenge, challenge)
@@ -107,7 +107,7 @@ class ChallengeControllerTest {
     @OptIn(InternalAPI::class)
     @Test
     fun updateCodeChallenge(): Unit = runBlocking {
-        val request = client.put("$address/codewars/${user1.username}"){
+        val request = client.put("$address/CodeWars/${user1.username}"){
             body = Json.encodeToString(updateData)
         }.bodyAsText()
         val challenge = Json.decodeFromString<CodeChallengeDto>(request)
@@ -117,7 +117,7 @@ class ChallengeControllerTest {
 
     @Test
     fun deleteCodeChallenge(): Unit = runBlocking {
-        client.delete("$address/codewars/${user1.username}/${codeChallenge.name}")
+        client.delete("$address/CodeWars/${user1.username}/${codeChallenge.name}")
 
         assertThrows<EntityNotFoundException> {
             transaction { CodeChallengeEntity[challengeId] }

@@ -31,6 +31,16 @@ class UserController {
         return entity
     }
 
+    @PostMapping
+    suspend fun createUser(
+        @RequestBody
+        user: UserDto
+    ): ResponseEntity<*> {
+        val data = suspendTransaction {
+            userService.createUser(user)
+        }
+        return ResponseEntity.ok(Json.encodeToString(data))
+    }
 
 
     @PutMapping("/{username}", produces = ["application/json"])
