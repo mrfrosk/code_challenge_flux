@@ -1,7 +1,7 @@
 package com.code.challenge_flux.services
 
 import com.code.challenge_flux.data.database.dto.LoginDto
-import com.code.challenge_flux.data.database.dto.UserDto
+import com.code.challenge_flux.data.database.dto.CreateUserDto
 import com.code.challenge_flux.data.database.entities.UserEntity
 import com.code.challenge_flux.data.database.tables.UsersTable
 import kotlinx.coroutines.runBlocking
@@ -23,17 +23,17 @@ class UserServiceTest {
     @Autowired
     lateinit var userService: UserService
 
-    val user1 = UserDto("test@mail.ru", "testUsername", "123")
-    val user2 = UserDto("test@mail.ru1", "testUsername1", "123")
+    val userCreateDto1 = CreateUserDto("test@mail.ru", "testUsername", "123")
+    val user2CreateDto = CreateUserDto("test@mail.ru1", "testUsername1", "123")
 
     @BeforeEach
     fun init() {
         transaction {
             UsersTable.deleteAll()
             UserEntity.new {
-                email = user1.email
-                username = user1.username
-                password = user1.password
+                email = userCreateDto1.email
+                username = userCreateDto1.username
+                password = userCreateDto1.password
             }
         }
     }
@@ -42,34 +42,38 @@ class UserServiceTest {
     fun createUser() {
         runBlocking {
             val dbUser = suspendTransaction {
-                userService.createUser(user2)
+                userService.createUser(user2CreateDto)
             }
-            assertEquals(user2, dbUser)
+            val userDto = CreateUserDto(dbUser.email, dbUser.username, dbUser.password)
+            assertEquals(user2CreateDto, userDto)
         }
     }
 
     @Test
     fun getUser() {
         runBlocking {
-            val user = suspendTransaction { userService.getUser(user1.username) }
-
-            assertEquals(user1, user)
+            val user = suspendTransaction { userService.getUser(userCreateDto1.username) }
+            val userDto = CreateUserDto(user.email, user.username, user.password)
+            assertEquals(userCreateDto1, userDto)
         }
     }
 
+    /**
+     * перевести тест с CreateUserDto на UserDto, если это нужно
+     */
     @Test
     fun updateUser(){
         runBlocking {
-            val updateData = UserDto("test3@mail.ru", "testUsername3", "123")
-            suspendTransaction { userService.updateUser(user1.username, updateData) }
+            val updateData = CreateUserDto("test3@mail.ru", "testUsername3", "123")
+            suspendTransaction { userService.updateUser(userCreateDto1.username, updateData) }
 
             val user =
                 suspendTransaction {
                     UserEntity.find { UsersTable.email eq updateData.email }.first().toDto()
                 }
-
-            assertNotEquals(user1, user)
-            assertEquals(updateData, user)
+            val userDto = CreateUserDto(user.email, user.username, user.password)
+            assertNotEquals(userCreateDto1, userDto)
+            assertEquals(updateData, userDto)
         }
     }
 
@@ -77,8 +81,8 @@ class UserServiceTest {
     fun deleteUser(){
         val isNull = runBlocking {
             suspendTransaction {
-                userService.deleteUser(user1.username)
-                UserEntity.find { UsersTable.email eq user1.email }.firstOrNull()
+                userService.deleteUser(userCreateDto1.username)
+                UserEntity.find { UsersTable.email eq userCreateDto1.email }.firstOrNull()
             }
         }
 
@@ -88,7 +92,7 @@ class UserServiceTest {
     @Test
     fun isExistsByMail(){
         runBlocking {
-            val mustExists = suspendTransaction { userService.isExists(user1.email) }
+            val mustExists = suspendTransaction { userService.isExists(userCreateDto1.email) }
             val mustNotExists = suspendTransaction { userService.isExists("") }
             assertEquals(true, mustExists)
             assertEquals(false, mustNotExists)
@@ -98,7 +102,7 @@ class UserServiceTest {
     @Test
     fun isExistsByDto(){
         runBlocking {
-            val mustExists = suspendTransaction { userService.isExists(LoginDto(user1.email, user1.password)) }
+            val mustExists = suspendTransaction { userService.isExists(LoginDto(userCreateDto1.email, userCreateDto1.password)) }
             val mustNotExists = suspendTransaction { userService.isExists(LoginDto("", "")) }
             assertEquals(true, mustExists)
             assertEquals(false, mustNotExists)

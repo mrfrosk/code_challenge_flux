@@ -1,6 +1,14 @@
 package com.code.challenge_flux.data.database.dto
 
+import com.code.challenge_flux.services.utils.UUIDSerializer
 import kotlinx.serialization.Serializable
+import java.util.UUID
 
 @Serializable
-data class UserDto(val email: String, val username: String, val password: String)
+data class UserDto(
+    @Serializable(with = UUIDSerializer::class)
+    val id: UUID,
+    val email: String,
+    val username: String,
+    val password: String
+)

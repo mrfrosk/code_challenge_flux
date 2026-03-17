@@ -1,12 +1,12 @@
 package com.code.challenge_flux.services
 
 import com.code.challenge_flux.data.database.dto.LoginDto
+import com.code.challenge_flux.data.database.dto.CreateUserDto
 import com.code.challenge_flux.data.database.dto.UserDto
 import com.code.challenge_flux.data.database.entities.UserEntity
 import com.code.challenge_flux.data.database.tables.UsersTable
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
-import org.jetbrains.exposed.v1.core.or
 import org.springframework.stereotype.Service
 
 @Service
@@ -35,7 +35,7 @@ class UserService {
      * Создаёт пользователя
      * @param userDto данные пользователя
      */
-    suspend fun createUser(userDto: UserDto): UserDto {
+    suspend fun createUser(userDto: CreateUserDto): UserDto {
         return UserEntity.new {
             email = userDto.email
             username = userDto.username
@@ -48,7 +48,7 @@ class UserService {
      * @param username текущее имя учётной записи
      * @param userDto данные для обновления
      */
-    suspend fun updateUser(username: String, userDto: UserDto) {
+    suspend fun updateUser(username: String, userDto: CreateUserDto) {
         val user = findUser(username)
         user.email = userDto.email
         user.username = userDto.username

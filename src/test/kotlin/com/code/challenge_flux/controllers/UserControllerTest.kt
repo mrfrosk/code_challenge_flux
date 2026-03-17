@@ -1,6 +1,7 @@
 package com.code.challenge_flux.controllers
 
 import com.code.challenge_flux.CodeChallengeWebFluxApplication
+import com.code.challenge_flux.data.database.dto.CreateUserDto
 import com.code.challenge_flux.data.database.dto.UserDto
 import com.code.challenge_flux.data.database.entities.UserEntity
 import com.code.challenge_flux.data.database.tables.UsersTable
@@ -30,8 +31,8 @@ class UserControllerTest {
 
     val client = HttpClient(CIO)
     val address = "http://localhost:8080${Mapping.USER}"
-    val user1 = UserDto("email", "test", "123")
-    val updateData = UserDto("email", "test1", "124")
+    val user1 = CreateUserDto("email", "test", "123")
+    val updateData = CreateUserDto("email", "test1", "124")
     val userId: UUID = UUID.randomUUID()
 
 
@@ -49,7 +50,8 @@ class UserControllerTest {
     fun getUserTest() = runBlocking {
         val request = client.get("$address/${user1.username}")
         val user = Json.decodeFromString<UserDto>(request.bodyAsText())
-        assertEquals(user1, user)
+        val userDto = CreateUserDto(user.email, user.username, user.password)
+        assertEquals(user1, userDto)
     }
 
     @OptIn(InternalAPI::class)
@@ -59,7 +61,7 @@ class UserControllerTest {
         val request = client.put("$address/${user1.username}") {
             body = Json.encodeToString(updateData)
         }
-        val user = Json.decodeFromString<UserDto>(request.bodyAsText())
+        val user = Json.decodeFromString<CreateUserDto>(request.bodyAsText())
         assertEquals(updateData, user)
     }
 

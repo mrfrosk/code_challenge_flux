@@ -2,7 +2,7 @@ package com.code.challenge_flux.controllers
 import com.code.challenge_flux.CodeChallengeWebFluxApplication
 import com.code.challenge_flux.data.challenge_sources.ChallengeSources
 import com.code.challenge_flux.data.database.dto.CodeChallengeDto
-import com.code.challenge_flux.data.database.dto.UserDto
+import com.code.challenge_flux.data.database.dto.CreateUserDto
 import com.code.challenge_flux.data.database.entities.CodeChallengeEntity
 import com.code.challenge_flux.data.database.entities.UserEntity
 import com.code.challenge_flux.data.database.tables.CodeChallengesTable
@@ -34,7 +34,7 @@ class ChallengeControllerTest {
 
     val client = HttpClient(CIO)
     val address = "http://localhost:8080${Mapping.CHALLENGE}"
-    val user1 = UserDto("email", "test", "123")
+    val user1 = CreateUserDto("email", "test", "123")
     val userId: UUID = UUID.randomUUID()
     val challengeId: UUID = UUID.randomUUID()
 

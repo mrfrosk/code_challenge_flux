@@ -1,6 +1,6 @@
 package com.code.challenge_flux.controllers
 
-import com.code.challenge_flux.data.database.dto.UserDto
+import com.code.challenge_flux.data.database.dto.CreateUserDto
 import com.code.challenge_flux.services.UserService
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
@@ -34,7 +34,7 @@ class UserController {
     @PostMapping
     suspend fun createUser(
         @RequestBody
-        user: UserDto
+        user: CreateUserDto
     ): ResponseEntity<*> {
         val data = suspendTransaction {
             userService.createUser(user)
@@ -45,7 +45,7 @@ class UserController {
 
     @PutMapping("/{username}", produces = ["application/json"])
     suspend fun updateUser(@PathVariable username: String, @RequestBody update: String): ResponseEntity<*> {
-        val updateData = Json.decodeFromString<UserDto>(update)
+        val updateData = Json.decodeFromString<CreateUserDto>(update)
         suspendTransaction {
             userService.updateUser(username, updateData)
         }
