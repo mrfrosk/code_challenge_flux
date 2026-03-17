@@ -12,9 +12,18 @@ import org.springframework.stereotype.Service
 @Service
 class UserService {
 
+    /**
+     * Метод возвращает пользователя
+     * @throws NoSuchElementException
+     */
+
     suspend fun getUser(username: String): UserDto {
         return findUser(username).toDto()
     }
+
+    /**
+     * Проверяет существование пользователя
+     */
 
     suspend fun isExists(loginDto: LoginDto): Boolean {
         return UserEntity.find {
@@ -22,6 +31,10 @@ class UserService {
         }.firstOrNull() != null
     }
 
+    /**
+     * Создаёт пользователя
+     * @param userDto данные пользователя
+     */
     suspend fun createUser(userDto: UserDto): UserDto {
         return UserEntity.new {
             email = userDto.email
@@ -30,6 +43,11 @@ class UserService {
         }.toDto()
     }
 
+    /**
+     * Обновление пользовтаеля
+     * @param username текущее имя учётной записи
+     * @param userDto данные для обновления
+     */
     suspend fun updateUser(username: String, userDto: UserDto) {
         val user = findUser(username)
         user.email = userDto.email
@@ -37,22 +55,32 @@ class UserService {
         user.password = userDto.password
     }
 
+    /**
+     * Удаление пользователя
+     * @param username имя учетной записи
+     */
     suspend fun deleteUser(username: String) {
         val user = findUser(username)
         user.delete()
     }
 
+    /**
+     * Проверяет существование пользователя по email
+     * @param email электронная почта пользователя
+     */
     suspend fun isExists(email: String) = UserEntity.find {
         UsersTable.email eq email
     }.firstOrNull() != null
 
-    suspend fun isExists(email: String, username: String) = UserEntity.find {
-        (UsersTable.email eq email) or (UsersTable.username eq username)
-    }.firstOrNull() != null
+    /**
+     * Метод для поиска пользователя
+     * @param username имя учётной записи
+     * @throws NoSuchElementException
+     */
 
     private suspend fun findUser(username: String): UserEntity {
         return UserEntity.find {
             UsersTable.username eq username
-        }.first()
+        }.firstOrNull() ?: throw NoSuchElementException("Пользователя с именем $username не сущесвует")
     }
 }

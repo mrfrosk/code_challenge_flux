@@ -18,8 +18,19 @@ class ChallengeService {
     @Autowired
     private lateinit var sourceManager: SourceManager
 
+    @Autowired
+    private lateinit var userService: UserService
+
+    /**
+     * Создаёт задачу
+     * @param username имя пользователя
+     * @param challenge данные о задаче
+     * @throws NoSuchElementException
+     */
     suspend fun createChallenge(username: String, challenge: CodeChallengeDto) {
-        val user = UserEntity.find { UsersTable.username eq username }.first()
+        val user = UserEntity.find { UsersTable.username eq username }.firstOrNull()
+            ?: throw NoSuchElementException("пользователь с именем $username не найден")
+
         CodeChallengeEntity.new {
             name = challenge.name
             description = challenge.description
@@ -30,6 +41,13 @@ class ChallengeService {
         }
     }
 
+    /**
+     * Возвращает задачу
+     * @param username имя пользователя
+     * @param name название задачи
+     */
+
+    @Deprecated("Устаревший метод")
     suspend fun getChallenge(username: String, name: String): CodeChallengeDto {
         val userId = UserEntity.find { UsersTable.username eq username }.first().id.value
         return CodeChallengeEntity.find {
@@ -37,17 +55,28 @@ class ChallengeService {
         }.first().toDto()
     }
 
-    suspend fun getChallenge(username: String, source: ChallengeSources, name: String): CodeChallengeDto {
+    /**
+     * Возвращает задачу, если не указан источник, то возращает первую найденую задачу
+     * @param username имя пользователя
+     * @param source источник задачи
+     * @param name название задачи
+     */
+    suspend fun getChallenge(username: String, source: ChallengeSources? = null, name: String): CodeChallengeDto {
         val userId = UserEntity.find { UsersTable.username eq username }.first().id.value
 
         return CodeChallengeEntity.find {
-            ((CodeChallengesTable.userId eq userId)
-                    and (CodeChallengesTable.name eq name)
-                    and (CodeChallengesTable.challengeSource eq source))
+            (CodeChallengesTable.name eq name) and (CodeChallengesTable.userId eq userId) andIfNotNull (source?.let {
+                CodeChallengesTable.challengeSource eq source
+            })
         }.first().toDto()
     }
 
 
+    /**
+     * Возвращает список задач, если источник не указан, то возращает все задачи
+     * @param username имя пользователя
+     * @param source исчтоник задач
+     */
     suspend fun getChallenges(username: String, source: ChallengeSources? = null): List<CodeChallengeDto> {
         val userId = UserEntity.find { UsersTable.username eq username }.first().id.value
         return CodeChallengeEntity.find {
@@ -57,6 +86,11 @@ class ChallengeService {
         }.map { it.toDto() }
     }
 
+    /**
+     * Обновляет задачу
+     * @param username имя пользователя
+     * @param updateData данные для обновления задачи
+     */
     suspend fun updateChallenge(username: String, updateData: CodeChallengeDto): CodeChallengeDto {
         val userId = UserEntity.find { UsersTable.username eq username }.first().id.value
         val challenge = CodeChallengeEntity.find {
@@ -66,6 +100,11 @@ class ChallengeService {
         return challenge.toDto()
     }
 
+    /**
+     * Удаляет задачу
+     * @param username имя пользователя
+     * @param name имя задачи
+     */
     suspend fun deleteChallenge(username: String, name: String) {
         val userId = UserEntity.find { UsersTable.username eq username }.first().id.value
         CodeChallengeEntity.find {
@@ -73,6 +112,11 @@ class ChallengeService {
         }.first().delete()
     }
 
+    /**
+     * Загружает из выбраного источника
+     * @param username имя пользователя
+     * @param source источник
+     */
     suspend fun addChallengeFromSource(username: String, source: ChallengeSources, offset: Int = 5) {
         val source = sourceManager.getSource(source)
         source.getChallenges(username, offset).forEach {
