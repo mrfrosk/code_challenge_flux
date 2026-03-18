@@ -1,4 +1,4 @@
-package com.code.challenge_flux.data.challenge_sources.codewars
+package com.code.challenge_flux.data.database.challenge_sources.codewars
 
 import com.code.challenge_flux.data.challenge_sources.ChallengeSources
 import com.code.challenge_flux.data.challenge_sources.IChallengeSource
