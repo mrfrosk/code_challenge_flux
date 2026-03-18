@@ -6,11 +6,11 @@ val jwtVersion = "0.12.3"
 val kamlVersion = "0.72.0"
 
 plugins {
-    kotlin("jvm") version "2.2.21"
-    kotlin("plugin.spring") version "2.2.21"
-    kotlin("plugin.serialization") version "2.2.21"
-    id("org.springframework.boot") version "4.0.3"
-    id("io.spring.dependency-management") version "1.1.7"
+    kotlin("jvm")
+    kotlin("plugin.spring")
+    kotlin("plugin.serialization")
+    id("org.springframework.boot")
+    id("io.spring.dependency-management")
 }
 
 group = "com.code"
@@ -22,6 +22,7 @@ repositories {
 
 dependencies {
     implementation(rootProject.project("sources:DTO"))
+
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
     implementation("com.charleskorn.kaml:kaml:${kamlVersion}")
     implementation("org.springframework.boot:spring-boot-starter")
@@ -31,9 +32,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-core", coroutineVersion)
 
     /** exposed*/
-    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-core")
+    implementation("org.jetbrains.exposed:exposed-jdbc")
+    implementation("org.jetbrains.exposed:exposed-dao")
     implementation("org.jetbrains.exposed:exposed-spring-boot4-starter:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposedVersion")
 

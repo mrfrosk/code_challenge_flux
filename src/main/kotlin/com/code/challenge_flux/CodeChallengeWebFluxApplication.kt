@@ -8,7 +8,8 @@ import org.springframework.web.reactive.config.WebFluxConfigurationSupport
     scanBasePackages = [
         "services",
         "dto",
-        "utils"
+        "utils",
+    "com.code.challenge_flux"
     ],
     scanBasePackageClasses = [
         WebFluxConfigurationSupport::class,
