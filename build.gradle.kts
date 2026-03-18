@@ -1,3 +1,5 @@
+import org.springframework.boot.gradle.tasks.bundling.BootJar
+
 val ktorVersion = "3.0.3"
 val exposedVersion = "1.0.0"
 val coroutineVersion = "1.9.0"
@@ -64,6 +66,16 @@ kotlin {
     compilerOptions {
         freeCompilerArgs.addAll("-Xjsr305=strict", "-Xannotation-default-target=param-property")
     }
+}
+
+/** Нужно при многомодульном проекте*/
+
+tasks.withType<BootJar> {
+    enabled = false
+}
+
+tasks.withType<Jar> {
+    enabled = true
 }
 
 tasks.withType<Test> {

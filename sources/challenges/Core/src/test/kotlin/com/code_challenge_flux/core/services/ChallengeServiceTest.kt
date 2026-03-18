@@ -48,13 +48,13 @@ class ChallengeServiceTest {
         transaction {
             UsersTable.deleteAll()
             CodeChallengesTable.deleteAll()
-            UserEntity.Companion.new(userId) {
+            UserEntity.new(userId) {
                 email = userDto.email
                 username = userDto.username
                 password = userDto.password
             }
 
-            CodeChallengeEntity.Companion.new {
+            CodeChallengeEntity.new {
                 name = codeChallenge.name
                 description = codeChallenge.description
                 challengeSource = codeChallenge.challengeSource
@@ -101,7 +101,7 @@ class ChallengeServiceTest {
                 val challengeDto = challengeService.updateChallenge(userDto.username, updateDifficult)
 
 
-                val challengeFromDb = CodeChallengeEntity.Companion.find {
+                val challengeFromDb = CodeChallengeEntity.find {
                     CodeChallengesTable.name eq codeChallenge1.name
                 }.first().toDto()
 
@@ -117,7 +117,7 @@ class ChallengeServiceTest {
         runBlocking {
             val mustNull = suspendTransaction {
                 challengeService.deleteChallenge(userDto.username, codeChallenge.name)
-                CodeChallengeEntity.Companion.find {
+                CodeChallengeEntity.find {
                     CodeChallengesTable.name eq codeChallenge.name
                 }.firstOrNull()
             }

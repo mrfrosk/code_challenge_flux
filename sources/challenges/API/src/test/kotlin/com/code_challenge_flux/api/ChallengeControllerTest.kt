@@ -15,9 +15,12 @@ import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.deleteAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import java.util.*
+import kotlin.test.Test
 
 @SpringBootTest(
     webEnvironment = WebEnvironment.DEFINED_PORT,
@@ -41,7 +44,7 @@ class ChallengeControllerTest {
     )
 
 
-    @org.junit.jupiter.api.BeforeEach
+    @BeforeEach
     fun init(): Unit = transaction {
         CodeChallengesTable.deleteAll()
         UsersTable.deleteAll()
@@ -61,7 +64,7 @@ class ChallengeControllerTest {
     }
 
     @OptIn(io.ktor.utils.io.InternalAPI::class)
-    @kotlin.test.Test
+    @Test
     fun createChallengeTest(): Unit = kotlinx.coroutines.runBlocking {
         val request = client.post("$address/CodeWars/${user1.username}") {
             body =
@@ -74,21 +77,21 @@ class ChallengeControllerTest {
                 CodeChallengesTable.name eq codeChallenge.name
             }.firstOrNull()?.toDto()
         }
-        kotlin.test.assertEquals(codeChallenge, challenge)
+        assertEquals(codeChallenge, challenge)
     }
 
-    @kotlin.test.Test
+    @Test
     fun getCodeChallenge(): Unit = kotlinx.coroutines.runBlocking {
         val request = client.get("$address/CodeWars/${user1.username}/${codeChallenge.name}") {}.bodyAsText()
         val challenge =
-            Json.Default.decodeFromString<CodeChallengeDto>(
+            Json.decodeFromString<CodeChallengeDto>(
                 request
             )
-        kotlin.test.assertEquals(codeChallenge, challenge)
+        assertEquals(codeChallenge, challenge)
     }
 
     @OptIn(io.ktor.utils.io.InternalAPI::class)
-    @kotlin.test.Test
+    @Test
     fun updateCodeChallenge(): Unit = kotlinx.coroutines.runBlocking {
         val request = client.put("$address/CodeWars/${user1.username}") {
             body =
@@ -98,11 +101,11 @@ class ChallengeControllerTest {
             Json.decodeFromString<CodeChallengeDto>(
                 request
             )
-        kotlin.test.assertEquals(updateData, challenge)
+        assertEquals(updateData, challenge)
     }
 
 
-    @kotlin.test.Test
+    @Test
     fun deleteCodeChallenge(): Unit = kotlinx.coroutines.runBlocking {
         client.delete("$address/CodeWars/${user1.username}/${codeChallenge.name}")
 
