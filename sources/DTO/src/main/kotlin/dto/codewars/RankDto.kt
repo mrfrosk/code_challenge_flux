@@ -1,4 +1,4 @@
-package com.code.challenge_flux.data.database.challenge_sources.codewars.dto
+package com.code.challenge_flux.data.database.dto.codewars
 
 import kotlinx.serialization.Serializable
 

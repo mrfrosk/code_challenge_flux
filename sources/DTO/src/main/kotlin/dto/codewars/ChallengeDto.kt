@@ -1,6 +1,6 @@
-package com.code.challenge_flux.data.database.challenge_sources.codewars.dto
+package com.code.challenge_flux.data.database.dto.codewars
 
-import com.code.challenge_flux.services.utils.LocalDateTimeSerializer
+import com.code.challenge_flux.data.database.utils.LocalDateTimeSerializer
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
 

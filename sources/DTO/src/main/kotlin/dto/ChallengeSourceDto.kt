@@ -1,6 +1,6 @@
 package com.code.challenge_flux.data.database.dto
 
-import com.code.challenge_flux.data.database.challenge_sources.ChallengeSources
+import com.code.challenge_flux.data.database.dto.codewars.ChallengeSources
 import com.code.challenge_flux.data.database.utils.UUIDSerializer
 import kotlinx.serialization.Serializable
 import java.util.UUID

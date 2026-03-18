@@ -1,6 +1,6 @@
 package com.code.challenge_flux.data.database.dto
 
-import com.code.challenge_flux.services.utils.UUIDSerializer
+import com.code.challenge_flux.data.database.utils.UUIDSerializer
 import kotlinx.serialization.Serializable
 import java.util.UUID
 

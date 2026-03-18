@@ -1,8 +1,8 @@
 package com.code.challenge_flux.services
 
-import com.code.challenge_flux.data.challenge_sources.ChallengeSources
 import com.code.challenge_flux.data.database.dto.CodeChallengeDto
 import com.code.challenge_flux.data.database.dto.UserDto
+import com.code.challenge_flux.data.database.dto.codewars.ChallengeSources
 import com.code.challenge_flux.data.database.entities.CodeChallengeEntity
 import com.code.challenge_flux.data.database.entities.UserEntity
 import com.code.challenge_flux.data.database.tables.CodeChallengesTable

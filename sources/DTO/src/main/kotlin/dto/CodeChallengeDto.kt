@@ -1,6 +1,6 @@
 package com.code.challenge_flux.data.database.dto
 
-import com.code.challenge_flux.data.challenge_sources.ChallengeSources
+import com.code.challenge_flux.data.database.dto.codewars.ChallengeSources
 import kotlinx.serialization.Serializable
 
 @Serializable

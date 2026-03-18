@@ -1,7 +1,7 @@
 package com.code.challenge_flux.controllers
 
-import com.code.challenge_flux.data.challenge_sources.ChallengeSources
 import com.code.challenge_flux.data.database.dto.CodeChallengeDto
+import com.code.challenge_flux.data.database.dto.codewars.ChallengeSources
 import com.code.challenge_flux.services.ChallengeService
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
