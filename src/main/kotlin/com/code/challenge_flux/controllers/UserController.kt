@@ -17,11 +17,6 @@ class UserController {
     @Autowired
     lateinit var userService: UserService
 
-    @GetMapping
-    suspend fun hi(): String {
-        return "hello"
-    }
-
     @GetMapping("/{username}", produces = ["application/json"])
     suspend fun getUser(@PathVariable username: String): ResponseEntity<*> {
         val user = suspendTransaction {
@@ -31,6 +26,16 @@ class UserController {
         return entity
     }
 
+    @PostMapping
+    suspend fun createUser(
+        @RequestBody
+        user: UserDto
+    ): ResponseEntity<*> {
+        val data = suspendTransaction {
+            userService.createUser(user)
+        }
+        return ResponseEntity.ok(Json.encodeToString(data))
+    }
 
 
     @PutMapping("/{username}", produces = ["application/json"])
@@ -43,10 +48,11 @@ class UserController {
     }
 
     @DeleteMapping("/{username}")
-    suspend fun deleteUser(@PathVariable username: String) {
+    suspend fun deleteUser(@PathVariable username: String): ResponseEntity<Nothing> {
         suspendTransaction {
             userService.deleteUser(username)
         }
+        return ResponseEntity.noContent().build<Nothing>()
     }
 
 

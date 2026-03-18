@@ -2,6 +2,7 @@ package com.code.challenge_flux.controllers
 
 import com.code.challenge_flux.CodeChallengeWebFluxApplication
 import com.code.challenge_flux.data.database.dto.UserDto
+import com.code.challenge_flux.data.database.dto.IdUserDto
 import com.code.challenge_flux.data.database.entities.UserEntity
 import com.code.challenge_flux.data.database.tables.UsersTable
 import io.ktor.client.*
@@ -48,8 +49,9 @@ class UserControllerTest {
     @Test
     fun getUserTest() = runBlocking {
         val request = client.get("$address/${user1.username}")
-        val user = Json.decodeFromString<UserDto>(request.bodyAsText())
-        assertEquals(user1, user)
+        val user = Json.decodeFromString<IdUserDto>(request.bodyAsText())
+        val userDto = UserDto(user.email, user.username, user.password)
+        assertEquals(user1, userDto)
     }
 
     @OptIn(InternalAPI::class)
