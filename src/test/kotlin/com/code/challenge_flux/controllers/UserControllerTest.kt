@@ -3,6 +3,7 @@ package com.code.challenge_flux.controllers
 import com.code.challenge_flux.CodeChallengeWebFluxApplication
 import com.code.challenge_flux.data.database.dto.UserDto
 import com.code.challenge_flux.data.database.dto.IdUserDto
+import controllers.Mapping
 import services.database.entities.UserEntity
 import services.database.tables.UsersTable
 import io.ktor.client.*

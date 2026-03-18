@@ -1,4 +1,4 @@
-package com.code.challenge_flux.controllers
+package controllers
 
 object Mapping {
     const val USER = "/users"

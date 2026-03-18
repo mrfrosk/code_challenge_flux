@@ -1,4 +1,4 @@
-package com.code.challenge_flux.controllers
+package controllers
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

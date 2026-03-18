@@ -3,6 +3,7 @@ import com.code.challenge_flux.CodeChallengeWebFluxApplication
 import com.code.challenge_flux.data.database.dto.CodeChallengeDto
 import com.code.challenge_flux.data.database.dto.UserDto
 import com.code.challenge_flux.data.database.dto.codewars.ChallengeSources
+import controllers.Mapping
 import services.database.entities.CodeChallengeEntity
 import services.database.entities.UserEntity
 import services.database.tables.CodeChallengesTable

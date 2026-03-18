@@ -1,4 +1,4 @@
-package com.code.challenge_flux.controllers
+package controllers
 
 import com.code.challenge_flux.data.database.dto.UserDto
 import kotlinx.serialization.json.Json
