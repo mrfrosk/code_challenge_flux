@@ -8,6 +8,7 @@ import com.code.challenge_flux.data.database.tables.UsersTable
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class UserService {
@@ -19,6 +20,11 @@ class UserService {
 
     suspend fun getUser(username: String): UserDto {
         return findUser(username).toDto()
+    }
+
+    suspend fun getUser(userId: UUID): UserDto {
+        return UserEntity.findById(userId)?.toDto()
+            ?: throw NoSuchElementException("Пользователя с id $userId не сущесвует")
     }
 
     /**
