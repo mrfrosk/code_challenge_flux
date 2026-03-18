@@ -1,12 +1,12 @@
 package com.code.challenge_flux.controllers
 
 import com.code.challenge_flux.data.database.dto.UserDto
-import com.code.challenge_flux.services.UserService
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import services.UserService
 
 
 @RestController

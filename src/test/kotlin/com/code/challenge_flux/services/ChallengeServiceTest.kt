@@ -3,10 +3,10 @@ package com.code.challenge_flux.services
 import com.code.challenge_flux.data.database.dto.CodeChallengeDto
 import com.code.challenge_flux.data.database.dto.UserDto
 import com.code.challenge_flux.data.database.dto.codewars.ChallengeSources
-import com.code.challenge_flux.data.database.entities.CodeChallengeEntity
-import com.code.challenge_flux.data.database.entities.UserEntity
-import com.code.challenge_flux.data.database.tables.CodeChallengesTable
-import com.code.challenge_flux.data.database.tables.UsersTable
+import services.database.entities.CodeChallengeEntity
+import services.database.entities.UserEntity
+import services.database.tables.CodeChallengesTable
+import services.database.tables.UsersTable
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.deleteAll
@@ -16,6 +16,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import services.ChallengeService
 import java.util.UUID
 import kotlin.test.Test
 import kotlin.test.assertEquals

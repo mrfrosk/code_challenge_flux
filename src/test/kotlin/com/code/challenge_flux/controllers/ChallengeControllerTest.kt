@@ -3,10 +3,10 @@ import com.code.challenge_flux.CodeChallengeWebFluxApplication
 import com.code.challenge_flux.data.database.dto.CodeChallengeDto
 import com.code.challenge_flux.data.database.dto.UserDto
 import com.code.challenge_flux.data.database.dto.codewars.ChallengeSources
-import com.code.challenge_flux.data.database.entities.CodeChallengeEntity
-import com.code.challenge_flux.data.database.entities.UserEntity
-import com.code.challenge_flux.data.database.tables.CodeChallengesTable
-import com.code.challenge_flux.data.database.tables.UsersTable
+import services.database.entities.CodeChallengeEntity
+import services.database.entities.UserEntity
+import services.database.tables.CodeChallengesTable
+import services.database.tables.UsersTable
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*

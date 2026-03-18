@@ -1,4 +1,4 @@
-package com.code.challenge_flux.data.database.tables
+package services.database.tables
 
 import com.code.challenge_flux.data.database.dto.codewars.ChallengeSources
 import org.jetbrains.exposed.v1.core.dao.id.java.UUIDTable

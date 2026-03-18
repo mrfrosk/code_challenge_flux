@@ -2,8 +2,8 @@ package com.code.challenge_flux.services
 
 import com.code.challenge_flux.data.database.dto.LoginDto
 import com.code.challenge_flux.data.database.dto.UserDto
-import com.code.challenge_flux.data.database.entities.UserEntity
-import com.code.challenge_flux.data.database.tables.UsersTable
+import services.database.entities.UserEntity
+import services.database.tables.UsersTable
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.deleteAll
@@ -13,6 +13,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import services.UserService
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals

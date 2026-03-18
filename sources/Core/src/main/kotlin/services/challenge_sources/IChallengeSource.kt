@@ -1,4 +1,4 @@
-package com.code.challenge_flux.services.challenge_sources
+package services.challenge_sources
 
 import com.code.challenge_flux.data.database.dto.CodeChallengeDto
 import com.code.challenge_flux.data.database.dto.UserDto

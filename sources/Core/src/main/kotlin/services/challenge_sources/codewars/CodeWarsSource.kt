@@ -1,4 +1,4 @@
-package com.code.challenge_flux.services.challenge_sources.codewars
+package services.challenge_sources.codewars
 
 import com.code.challenge_flux.data.database.dto.CodeChallengeDto
 import com.code.challenge_flux.data.database.dto.UserDto
@@ -6,11 +6,10 @@ import com.code.challenge_flux.data.database.dto.codewars.ChallengeDto
 import com.code.challenge_flux.data.database.dto.codewars.ChallengeSources
 import com.code.challenge_flux.data.database.dto.codewars.ChallengesDto
 import com.code.challenge_flux.data.database.dto.codewars.ShortChallengeDto
-import com.code.challenge_flux.data.database.entities.CodeChallengeEntity
-import com.code.challenge_flux.data.database.entities.UserEntity
-import com.code.challenge_flux.data.database.tables.CodeChallengesTable
-import com.code.challenge_flux.data.database.tables.UsersTable
-import com.code.challenge_flux.services.challenge_sources.IChallengeSource
+import services.database.entities.CodeChallengeEntity
+import services.database.entities.UserEntity
+import services.database.tables.CodeChallengesTable
+import services.database.tables.UsersTable
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.request.get
@@ -18,6 +17,7 @@ import io.ktor.client.statement.bodyAsText
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.v1.core.eq
 import org.springframework.stereotype.Service
+import services.challenge_sources.IChallengeSource
 import java.util.UUID
 
 

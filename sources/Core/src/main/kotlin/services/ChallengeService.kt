@@ -1,10 +1,10 @@
-package com.code.challenge_flux.services
+package services
 
 import com.code.challenge_flux.data.database.dto.codewars.ChallengeSources
 import com.code.challenge_flux.data.database.dto.CodeChallengeDto
-import com.code.challenge_flux.data.database.entities.CodeChallengeEntity
-import com.code.challenge_flux.data.database.entities.UserEntity
-import com.code.challenge_flux.data.database.tables.CodeChallengesTable
+import services.database.entities.CodeChallengeEntity
+import services.database.entities.UserEntity
+import services.database.tables.CodeChallengesTable
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.andIfNotNull
 import org.jetbrains.exposed.v1.core.eq

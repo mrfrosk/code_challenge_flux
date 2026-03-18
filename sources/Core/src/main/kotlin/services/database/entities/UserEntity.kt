@@ -1,7 +1,7 @@
-package com.code.challenge_flux.data.database.entities
+package services.database.entities
 
 import com.code.challenge_flux.data.database.dto.IdUserDto
-import com.code.challenge_flux.data.database.tables.UsersTable
+import services.database.tables.UsersTable
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.dao.java.UUIDEntity
 import org.jetbrains.exposed.v1.dao.java.UUIDEntityClass

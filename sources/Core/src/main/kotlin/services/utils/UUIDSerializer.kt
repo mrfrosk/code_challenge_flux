@@ -1,4 +1,4 @@
-package com.code.challenge_flux.services.utils
+package services.utils
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
