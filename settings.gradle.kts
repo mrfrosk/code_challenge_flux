@@ -1,5 +1,6 @@
 rootProject.name = "challenge"
 
-include("sources:DTO")
-include("sources:Core")
-include("sources:API")
+include("sources:challenges:DTO")
+include("sources:challenges:Core")
+include("sources:challenges:API")
+include("sources:Application")

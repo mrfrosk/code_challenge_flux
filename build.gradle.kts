@@ -28,9 +28,10 @@ repositories {
 }
 
 dependencies {
-    implementation(project("sources:DTO"))
-    implementation(project("sources:Core"))
-    implementation(project("sources:API"))
+    implementation(project("sources:challenges:DTO"))
+    implementation(project("sources:challenges:Core"))
+    implementation(project("sources:challenges:API"))
+    implementation(project("sources:Application"))
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
     implementation("com.charleskorn.kaml:kaml:${kamlVersion}")
     developmentOnly("org.springframework.boot:spring-boot-docker-compose")

@@ -21,8 +21,6 @@ repositories {
 }
 
 dependencies {
-    implementation(rootProject.project("sources:DTO"))
-
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
     implementation("com.charleskorn.kaml:kaml:${kamlVersion}")
     implementation("org.springframework.boot:spring-boot-starter")
@@ -48,6 +46,9 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    implementation(rootProject.project("sources:challenges:DTO"))
+    implementation(rootProject.project("sources:challenges:Core"))
+    testImplementation(kotlin("test"))
 }
 
 kotlin {
