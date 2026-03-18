@@ -6,7 +6,7 @@ import com.code.challenge_flux.data.challenge_sources.codewars.dto.ChallengeDto
 import com.code.challenge_flux.data.challenge_sources.codewars.dto.ChallengesDto
 import com.code.challenge_flux.data.challenge_sources.codewars.dto.ShortChallengeDto
 import com.code.challenge_flux.data.database.dto.CodeChallengeDto
-import com.code.challenge_flux.data.database.dto.CreateUserDto
+import com.code.challenge_flux.data.database.dto.UserDto
 import com.code.challenge_flux.data.database.entities.CodeChallengeEntity
 import com.code.challenge_flux.data.database.entities.UserEntity
 import com.code.challenge_flux.data.database.tables.CodeChallengesTable
@@ -27,7 +27,7 @@ class CodeWarsSource: IChallengeSource {
     private val challengeInfoUrl = "https://www.codewars.com/api/v1/code-challenges/"
     private val client = HttpClient(CIO)
 
-    override suspend fun getUser(username: String): CreateUserDto {
+    override suspend fun getUser(username: String): UserDto {
        TODO("пока не решил, должен ли существовать этот метод в принципе")
     }
 

@@ -1,8 +1,8 @@
 package com.code.challenge_flux.services
 
 import com.code.challenge_flux.data.database.dto.LoginDto
-import com.code.challenge_flux.data.database.dto.CreateUserDto
 import com.code.challenge_flux.data.database.dto.UserDto
+import com.code.challenge_flux.data.database.dto.IdUserDto
 import com.code.challenge_flux.data.database.entities.UserEntity
 import com.code.challenge_flux.data.database.tables.UsersTable
 import org.jetbrains.exposed.v1.core.and
@@ -18,11 +18,11 @@ class UserService {
      * @throws NoSuchElementException
      */
 
-    suspend fun getUser(username: String): UserDto {
+    suspend fun getUser(username: String): IdUserDto {
         return findUser(username).toDto()
     }
 
-    suspend fun getUser(userId: UUID): UserDto {
+    suspend fun getUser(userId: UUID): IdUserDto {
         return UserEntity.findById(userId)?.toDto()
             ?: throw NoSuchElementException("Пользователя с id $userId не сущесвует")
     }
@@ -41,7 +41,7 @@ class UserService {
      * Создаёт пользователя
      * @param userDto данные пользователя
      */
-    suspend fun createUser(userDto: CreateUserDto): UserDto {
+    suspend fun createUser(userDto: UserDto): IdUserDto {
         return UserEntity.new {
             email = userDto.email
             username = userDto.username
@@ -54,7 +54,7 @@ class UserService {
      * @param username текущее имя учётной записи
      * @param userDto данные для обновления
      */
-    suspend fun updateUser(username: String, userDto: CreateUserDto) {
+    suspend fun updateUser(username: String, userDto: UserDto) {
         val user = findUser(username)
         user.email = userDto.email
         user.username = userDto.username

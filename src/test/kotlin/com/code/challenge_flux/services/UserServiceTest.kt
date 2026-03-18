@@ -1,7 +1,7 @@
 package com.code.challenge_flux.services
 
 import com.code.challenge_flux.data.database.dto.LoginDto
-import com.code.challenge_flux.data.database.dto.CreateUserDto
+import com.code.challenge_flux.data.database.dto.UserDto
 import com.code.challenge_flux.data.database.entities.UserEntity
 import com.code.challenge_flux.data.database.tables.UsersTable
 import kotlinx.coroutines.runBlocking
@@ -23,8 +23,8 @@ class UserServiceTest {
     @Autowired
     lateinit var userService: UserService
 
-    val userCreateDto1 = CreateUserDto("test@mail.ru", "testUsername", "123")
-    val user2CreateDto = CreateUserDto("test@mail.ru1", "testUsername1", "123")
+    val userCreateDto1 = UserDto("test@mail.ru", "testUsername", "123")
+    val user2CreateDto = UserDto("test@mail.ru1", "testUsername1", "123")
 
     @BeforeEach
     fun init() {
@@ -44,7 +44,7 @@ class UserServiceTest {
             val dbUser = suspendTransaction {
                 userService.createUser(user2CreateDto)
             }
-            val userDto = CreateUserDto(dbUser.email, dbUser.username, dbUser.password)
+            val userDto = UserDto(dbUser.email, dbUser.username, dbUser.password)
             assertEquals(user2CreateDto, userDto)
         }
     }
@@ -53,7 +53,7 @@ class UserServiceTest {
     fun getUser() {
         runBlocking {
             val user = suspendTransaction { userService.getUser(userCreateDto1.username) }
-            val userDto = CreateUserDto(user.email, user.username, user.password)
+            val userDto = UserDto(user.email, user.username, user.password)
             assertEquals(userCreateDto1, userDto)
         }
     }
@@ -64,14 +64,14 @@ class UserServiceTest {
     @Test
     fun updateUser(){
         runBlocking {
-            val updateData = CreateUserDto("test3@mail.ru", "testUsername3", "123")
+            val updateData = UserDto("test3@mail.ru", "testUsername3", "123")
             suspendTransaction { userService.updateUser(userCreateDto1.username, updateData) }
 
             val user =
                 suspendTransaction {
                     UserEntity.find { UsersTable.email eq updateData.email }.first().toDto()
                 }
-            val userDto = CreateUserDto(user.email, user.username, user.password)
+            val userDto = UserDto(user.email, user.username, user.password)
             assertNotEquals(userCreateDto1, userDto)
             assertEquals(updateData, userDto)
         }

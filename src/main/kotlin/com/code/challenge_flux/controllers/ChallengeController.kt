@@ -59,18 +59,19 @@ class ChallengeController {
     }
 
     @PostMapping("*/{username}", produces = ["application/json"])
-    suspend fun createCodeWarsChallenge(
+    suspend fun createChallenge(
         @PathVariable username: String,
         @RequestBody challengeData: String,
-    ) {
+    ): ResponseEntity<*> {
         val challenge = suspendTransaction {
             val challenge = Json.decodeFromString<CodeChallengeDto>(challengeData)
             challengeService.createChallenge(username, challenge)
         }
+        return ResponseEntity.ok(challenge)
     }
 
     @PutMapping("*/{username}")
-    suspend fun updateCodeWarsChallenge(
+    suspend fun updateChallenge(
         @PathVariable username: String,
         @RequestBody challengeData: String,
     ): ResponseEntity<*> {
@@ -83,13 +84,14 @@ class ChallengeController {
     }
 
     @DeleteMapping("*/{username}/{name}")
-    suspend fun deleteCodeWarsChallenge(
+    suspend fun deleteChallenge(
         @PathVariable username: String,
         @PathVariable name: String,
-        ) {
+    ): ResponseEntity<*> {
         suspendTransaction {
             challengeService.deleteChallenge(username, name)
         }
+        return ResponseEntity.noContent().build<Nothing>()
     }
 
 }

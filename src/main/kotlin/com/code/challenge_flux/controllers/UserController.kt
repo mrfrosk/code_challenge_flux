@@ -1,6 +1,6 @@
 package com.code.challenge_flux.controllers
 
-import com.code.challenge_flux.data.database.dto.CreateUserDto
+import com.code.challenge_flux.data.database.dto.UserDto
 import com.code.challenge_flux.services.UserService
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
@@ -17,11 +17,6 @@ class UserController {
     @Autowired
     lateinit var userService: UserService
 
-    @GetMapping
-    suspend fun hi(): String {
-        return "hello"
-    }
-
     @GetMapping("/{username}", produces = ["application/json"])
     suspend fun getUser(@PathVariable username: String): ResponseEntity<*> {
         val user = suspendTransaction {
@@ -34,7 +29,7 @@ class UserController {
     @PostMapping
     suspend fun createUser(
         @RequestBody
-        user: CreateUserDto
+        user: UserDto
     ): ResponseEntity<*> {
         val data = suspendTransaction {
             userService.createUser(user)
@@ -45,7 +40,7 @@ class UserController {
 
     @PutMapping("/{username}", produces = ["application/json"])
     suspend fun updateUser(@PathVariable username: String, @RequestBody update: String): ResponseEntity<*> {
-        val updateData = Json.decodeFromString<CreateUserDto>(update)
+        val updateData = Json.decodeFromString<UserDto>(update)
         suspendTransaction {
             userService.updateUser(username, updateData)
         }
@@ -53,10 +48,11 @@ class UserController {
     }
 
     @DeleteMapping("/{username}")
-    suspend fun deleteUser(@PathVariable username: String) {
+    suspend fun deleteUser(@PathVariable username: String): ResponseEntity<Nothing> {
         suspendTransaction {
             userService.deleteUser(username)
         }
+        return ResponseEntity.noContent().build<Nothing>()
     }
 
 
