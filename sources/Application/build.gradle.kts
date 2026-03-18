@@ -28,13 +28,11 @@ repositories {
 }
 
 dependencies {
-    implementation(project("sources:challenges:DTO"))
-    implementation(project("sources:challenges:Core"))
-    implementation(project("sources:challenges:API"))
-    implementation(project("sources:Application"))
+    implementation(rootProject.project("sources:challenges:DTO"))
+    implementation(rootProject.project("sources:challenges:Core"))
+    implementation(rootProject.project("sources:challenges:API"))
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
     implementation("com.charleskorn.kaml:kaml:${kamlVersion}")
-    developmentOnly("org.springframework.boot:spring-boot-docker-compose")
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
