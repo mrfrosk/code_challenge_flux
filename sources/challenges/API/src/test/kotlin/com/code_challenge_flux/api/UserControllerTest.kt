@@ -1,7 +1,7 @@
 package com.code_challenge_flux.api
 
 import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.UserDto
-import com.code_challenge_flux.core.services.database.entities.UserEntity
+import com.code_challenge_flux.core.services.database.entities.User
 import com.code_challenge_flux.core.services.database.tables.UsersTable
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
@@ -48,7 +48,7 @@ class UserControllerTest {
     @BeforeEach
     fun init(): Unit = transaction {
         UsersTable.deleteAll()
-        UserEntity.new(userId) {
+        User.new(userId) {
             email = user1.email
             username = user1.username
             password = user1.password
@@ -86,7 +86,7 @@ class UserControllerTest {
     fun deleteUser(): Unit = runBlocking {
         client.delete("$address/${user1.username}")
         assertThrows<EntityNotFoundException> {
-                    transaction { UserEntity.Companion[userId] }
+            transaction { User.Companion[userId] }
                 }
     }
     

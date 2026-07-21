@@ -11,6 +11,7 @@ plugins {
     kotlin("plugin.serialization")
     id("org.springframework.boot")
     id("io.spring.dependency-management")
+    `java-test-fixtures`
 }
 
 group = "com.code"
@@ -22,6 +23,11 @@ repositories {
 
 dependencies {
     implementation(rootProject.project("sources:challenges:DTO"))
+    /**
+     * Способ для наследования родительских зависимостей.
+     */
+    testFixturesImplementation(sourceSets.main.get().runtimeClasspath)
+    testFixturesImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
     implementation("com.charleskorn.kaml:kaml:${kamlVersion}")

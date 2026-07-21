@@ -1,9 +1,9 @@
 package com.code_challenge_flux.core.services
 
-import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.codewars.ChallengeSources
 import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.CodeChallengeDto
-import com.code_challenge_flux.core.services.database.entities.CodeChallengeEntity
-import com.code_challenge_flux.core.services.database.entities.UserEntity
+import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.codewars.ChallengeSources
+import com.code_challenge_flux.core.services.database.entities.Challenge
+import com.code_challenge_flux.core.services.database.entities.User
 import com.code_challenge_flux.core.services.database.tables.CodeChallengesTable
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.andIfNotNull
@@ -29,13 +29,13 @@ class ChallengeService {
     suspend fun createChallenge(username: String, challenge: CodeChallengeDto): CodeChallengeDto {
         val userId = userService.getUser(username).id
 
-        return CodeChallengeEntity.new {
+        return Challenge.new {
             name = challenge.name
             description = challenge.description
             challengeSource = challenge.challengeSource
             difficult = challenge.difficult
             solution = challenge.solution
-            userEntity = UserEntity[userId]
+            user = User[userId]
         }.toDto()
     }
 
@@ -48,7 +48,7 @@ class ChallengeService {
     @Deprecated("Устаревший метод")
     suspend fun getChallenge(username: String, name: String): CodeChallengeDto {
         val userId = userService.getUser(username).id
-        return CodeChallengeEntity.find {
+        return Challenge.find {
             (CodeChallengesTable.userId eq userId) and (CodeChallengesTable.name eq name)
         }.first().toDto()
     }
@@ -62,7 +62,7 @@ class ChallengeService {
     suspend fun getChallenge(username: String, source: ChallengeSources? = null, name: String): CodeChallengeDto {
         val userId = userService.getUser(username).id
 
-        return CodeChallengeEntity.find {
+        return Challenge.find {
             (CodeChallengesTable.name eq name) and (CodeChallengesTable.userId eq userId) andIfNotNull (source?.let {
                 CodeChallengesTable.challengeSource eq source
             })
@@ -77,7 +77,7 @@ class ChallengeService {
      */
     suspend fun getChallenges(username: String, source: ChallengeSources? = null): List<CodeChallengeDto> {
         val userId = userService.getUser(username).id
-        return CodeChallengeEntity.find {
+        return Challenge.find {
             (CodeChallengesTable.userId eq userId) andIfNotNull (source?.let {
                 CodeChallengesTable.challengeSource eq source
             })
@@ -91,7 +91,7 @@ class ChallengeService {
      */
     suspend fun updateChallenge(username: String, updateData: CodeChallengeDto): CodeChallengeDto {
         val userId = userService.getUser(username).id
-        val challenge = CodeChallengeEntity.find {
+        val challenge = Challenge.find {
             CodeChallengesTable.userId eq userId
         }.first()
         challenge.updateFromDto(updateData)
@@ -105,7 +105,7 @@ class ChallengeService {
      */
     suspend fun deleteChallenge(username: String, name: String) {
         val userId = userService.getUser(username).id
-        CodeChallengeEntity.find {
+        Challenge.find {
             (CodeChallengesTable.userId eq userId) and (CodeChallengesTable.name eq name)
         }.first().delete()
     }

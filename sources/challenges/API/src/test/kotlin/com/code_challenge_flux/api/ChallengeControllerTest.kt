@@ -3,8 +3,8 @@ package com.code_challenge_flux.api
 import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.CodeChallengeDto
 import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.UserDto
 import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.codewars.ChallengeSources
-import com.code_challenge_flux.core.services.database.entities.CodeChallengeEntity
-import com.code_challenge_flux.core.services.database.entities.UserEntity
+import com.code_challenge_flux.core.services.database.entities.Challenge
+import com.code_challenge_flux.core.services.database.entities.User
 import com.code_challenge_flux.core.services.database.tables.CodeChallengesTable
 import com.code_challenge_flux.core.services.database.tables.UsersTable
 import io.ktor.client.*
@@ -48,18 +48,18 @@ class ChallengeControllerTest {
     fun init(): Unit = transaction {
         CodeChallengesTable.deleteAll()
         UsersTable.deleteAll()
-        UserEntity.new(userId) {
+        User.new(userId) {
             email = user1.email
             username = user1.username
             password = user1.password
         }
-        CodeChallengeEntity.new(challengeId) {
+        Challenge.new(challengeId) {
             name = codeChallenge.name
             description = codeChallenge.description
             challengeSource = codeChallenge.challengeSource
             difficult = codeChallenge.difficult
             solution = codeChallenge.solution
-            userEntity = UserEntity[userId]
+            user = User[userId]
         }
     }
 
@@ -68,7 +68,7 @@ class ChallengeControllerTest {
     fun createChallengeTest(): Unit = kotlinx.coroutines.runBlocking {
 
         val challenge = transaction {
-            CodeChallengeEntity.find {
+            Challenge.find {
                 CodeChallengesTable.name eq codeChallenge.name
             }.firstOrNull()?.toDto()
         }
@@ -105,7 +105,7 @@ class ChallengeControllerTest {
         client.delete("$address/CodeWars/${user1.username}/${codeChallenge.name}")
 
         org.junit.jupiter.api.assertThrows<org.jetbrains.exposed.v1.dao.exceptions.EntityNotFoundException> {
-            transaction { CodeChallengeEntity.Companion[challengeId] }
+            transaction { Challenge.Companion[challengeId] }
         }
     }
 
