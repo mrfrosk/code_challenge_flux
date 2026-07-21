@@ -22,8 +22,8 @@ class UserController {
         val user = suspendTransaction {
             userService.getUser(username)
         }
-        val entity = ResponseEntity.ok(user)
-        return entity
+        val userData = ResponseEntity.ok(user)
+        return userData
     }
 
     @PostMapping
@@ -52,7 +52,7 @@ class UserController {
         suspendTransaction {
             userService.deleteUser(username)
         }
-        return ResponseEntity.noContent().build<Nothing>()
+        return ResponseEntity.noContent().build()
     }
 
 

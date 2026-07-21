@@ -11,6 +11,7 @@ plugins {
     kotlin("plugin.serialization")
     id("org.springframework.boot")
     id("io.spring.dependency-management")
+    `java-test-fixtures`
 }
 
 group = "com.code"

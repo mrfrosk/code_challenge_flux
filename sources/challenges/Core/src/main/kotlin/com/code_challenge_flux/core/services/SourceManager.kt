@@ -15,9 +15,6 @@ class SourceManager {
         return when (source) {
             ChallengeSources.CodeWars -> codeWarsSource
             ChallengeSources.LeetCode -> throw NoSuchElementException("Поддрежка LeetCode в разработке")
-            else -> {
-                throw NoSuchElementException("Данного источника задач не сущесвует")
-            }
         }
     }
 }

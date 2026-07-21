@@ -66,12 +66,7 @@ class ChallengeControllerTest {
     @OptIn(io.ktor.utils.io.InternalAPI::class)
     @Test
     fun createChallengeTest(): Unit = kotlinx.coroutines.runBlocking {
-        val request = client.post("$address/CodeWars/${user1.username}") {
-            body =
-                Json.encodeToString(codeChallenge1)
-        }.bodyAsText()
 
-        println(request)
         val challenge = transaction {
             CodeChallengeEntity.find {
                 CodeChallengesTable.name eq codeChallenge.name
