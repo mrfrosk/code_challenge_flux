@@ -11,15 +11,15 @@ import java.util.*
 
 open class ChallengeFixture : BasicFixture() {
     protected val userId: UUID = UUID.randomUUID()
-    protected val userDto = UserDto("test", "test", "test")
-    protected val codeChallenge = CodeChallengeDto(
-        "test name",
+    protected val userData = UserDto("email", "test", "test")
+    protected val existedChallenge = CodeChallengeDto(
+        "test_name",
         "test description",
         ChallengeSources.CodeWars,
         "8 kyu",
         "print('hello world')"
     )
-    protected val codeChallenge1 = CodeChallengeDto(
+    protected val challengeBeforeUpdate = CodeChallengeDto(
         "test name1",
         "test description",
         ChallengeSources.CodeWars,
@@ -27,22 +27,29 @@ open class ChallengeFixture : BasicFixture() {
         "print('hello world')"
     )
 
+    protected val challengeId: UUID = UUID.randomUUID()
+
+
+    protected val updateData = CodeChallengeDto(
+        "test", "test1", ChallengeSources.CodeWars, "test", "test"
+    )
+
     @BeforeEach
     override fun setup() {
         tearDown()
         transaction {
             User.new(userId) {
-                email = userDto.email
-                username = userDto.username
-                password = userDto.password
+                email = userData.email
+                username = userData.username
+                password = userData.password
             }
 
-            Challenge.new {
-                name = codeChallenge.name
-                description = codeChallenge.description
-                challengeSource = codeChallenge.challengeSource
-                difficult = codeChallenge.difficult
-                solution = codeChallenge.solution
+            Challenge.new(challengeId) {
+                name = existedChallenge.name
+                description = existedChallenge.description
+                challengeSource = existedChallenge.challengeSource
+                difficult = existedChallenge.difficult
+                solution = existedChallenge.solution
                 user = User[userId]
             }
         }

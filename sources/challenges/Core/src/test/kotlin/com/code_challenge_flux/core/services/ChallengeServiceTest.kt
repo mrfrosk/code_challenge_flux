@@ -1,7 +1,5 @@
 package com.code_challenge_flux.core.services
 
-import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.CodeChallengeDto
-import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.codewars.ChallengeSources
 import com.code_challenge_flux.core.fixtures.ChallengeFixture
 import com.code_challenge_flux.core.services.database.entities.Challenge
 import com.code_challenge_flux.core.services.database.tables.CodeChallengesTable
@@ -25,9 +23,9 @@ class ChallengeServiceTest : ChallengeFixture() {
     fun getCodeChallenge() {
         runBlocking {
             val codeChallengeBd = suspendTransaction {
-                challengeService.getChallenge(userDto.username, codeChallenge.name)
+                challengeService.getChallenge(userData.username, existedChallenge.name)
             }
-            assertEquals(codeChallenge, codeChallengeBd)
+            assertEquals(existedChallenge, codeChallengeBd)
         }
     }
 
@@ -35,10 +33,10 @@ class ChallengeServiceTest : ChallengeFixture() {
     fun createChallenge() {
         runBlocking {
             val codeChallengeBd = suspendTransaction {
-                challengeService.createChallenge(userDto.username, codeChallenge1)
-                challengeService.getChallenge(userDto.username, codeChallenge1.name)
+                challengeService.createChallenge(userData.username, challengeBeforeUpdate)
+                challengeService.getChallenge(userData.username, challengeBeforeUpdate.name)
             }
-            assertEquals(codeChallenge1, codeChallengeBd)
+            assertEquals(challengeBeforeUpdate, codeChallengeBd)
         }
     }
 
@@ -46,23 +44,17 @@ class ChallengeServiceTest : ChallengeFixture() {
     fun updateCodeChallenge() {
         runBlocking {
             suspendTransaction {
-                val updateDifficult = CodeChallengeDto(
-                    "test name1",
-                    "test description",
-                    ChallengeSources.CodeWars,
-                    "3 kyu",
-                    "print('hello world')"
-                )
 
-                val challengeDto = challengeService.updateChallenge(userDto.username, updateDifficult)
+
+                val challengeDto = challengeService.updateChallenge(userData.username, updateData)
 
 
                 val challengeFromDb = Challenge.find {
-                    CodeChallengesTable.name eq codeChallenge1.name
+                    CodeChallengesTable.name eq updateData.name
                 }.first().toDto()
 
 
-                assertNotEquals(codeChallenge1, challengeDto)
+                assertNotEquals(challengeBeforeUpdate, challengeDto)
                 assertEquals(challengeDto, challengeFromDb)
             }
         }
@@ -72,9 +64,9 @@ class ChallengeServiceTest : ChallengeFixture() {
     fun deleteCodeChallenge() {
         runBlocking {
             val mustNull = suspendTransaction {
-                challengeService.deleteChallenge(userDto.username, codeChallenge.name)
+                challengeService.deleteChallenge(userData.username, existedChallenge.name)
                 Challenge.find {
-                    CodeChallengesTable.name eq codeChallenge.name
+                    CodeChallengesTable.name eq existedChallenge.name
                 }.firstOrNull()
             }
             assertEquals(null, mustNull)

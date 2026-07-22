@@ -50,7 +50,7 @@ class UserServiceTest : UsersFixture() {
     @Test
     fun update() {
         runBlocking {
-            val updateData = UserDto("test3@mail.ru", "testUsername3", "123")
+
             suspendTransaction { userService.updateUser(existedUser.username, updateData) }
 
             val user =
