@@ -1,77 +1,31 @@
 package com.code_challenge_flux.core.services
 
-import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.CodeChallengeDto
-import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.UserDto
-import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.codewars.ChallengeSources
-import com.code_challenge_flux.core.services.database.entities.CodeChallengeEntity
-import com.code_challenge_flux.core.services.database.entities.UserEntity
+import com.code_challenge_flux.core.fixtures.ChallengeFixture
+import com.code_challenge_flux.core.services.database.entities.Challenge
 import com.code_challenge_flux.core.services.database.tables.CodeChallengesTable
-import com.code_challenge_flux.core.services.database.tables.UsersTable
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.v1.core.eq
-import org.jetbrains.exposed.v1.jdbc.deleteAll
 import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
-import org.jetbrains.exposed.v1.jdbc.transactions.transaction
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import java.util.UUID
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
 @SpringBootTest
-class ChallengeServiceTest {
+class ChallengeServiceTest : ChallengeFixture() {
 
     @Autowired
     lateinit var challengeService: ChallengeService
-    private final val userId = UUID.randomUUID()
-    val userDto = UserDto("test", "test", "test")
-    val codeChallenge = CodeChallengeDto(
-        "test name",
-        "test description",
-        ChallengeSources.CodeWars,
-        "8 kyu",
-        "print('hello world')"
-    )
-    val codeChallenge1 = CodeChallengeDto(
-        "test name1",
-        "test description",
-        ChallengeSources.CodeWars,
-        "8 kyu",
-        "print('hello world')"
-    )
 
-    @BeforeEach
-    fun init() {
-        transaction {
-            UsersTable.deleteAll()
-            CodeChallengesTable.deleteAll()
-            UserEntity.new(userId) {
-                email = userDto.email
-                username = userDto.username
-                password = userDto.password
-            }
-
-            CodeChallengeEntity.new {
-                name = codeChallenge.name
-                description = codeChallenge.description
-                challengeSource = codeChallenge.challengeSource
-                difficult = codeChallenge.difficult
-                solution = codeChallenge.solution
-                userEntity = UserEntity.Companion[userId]
-            }
-        }
-    }
 
     @Test
     fun getCodeChallenge() {
         runBlocking {
             val codeChallengeBd = suspendTransaction {
-                challengeService.getChallenge(userDto.username, codeChallenge.name)
+                challengeService.getChallenge(userData.username, existedChallenge.name)
             }
-            assertEquals(codeChallenge, codeChallengeBd)
+            assertEquals(existedChallenge, codeChallengeBd)
         }
     }
 
@@ -79,10 +33,10 @@ class ChallengeServiceTest {
     fun createChallenge() {
         runBlocking {
             val codeChallengeBd = suspendTransaction {
-                challengeService.createChallenge(userDto.username, codeChallenge1)
-                challengeService.getChallenge(userDto.username, codeChallenge1.name)
+                challengeService.createChallenge(userData.username, challengeBeforeUpdate)
+                challengeService.getChallenge(userData.username, challengeBeforeUpdate.name)
             }
-            assertEquals(codeChallenge1, codeChallengeBd)
+            assertEquals(challengeBeforeUpdate, codeChallengeBd)
         }
     }
 
@@ -90,23 +44,17 @@ class ChallengeServiceTest {
     fun updateCodeChallenge() {
         runBlocking {
             suspendTransaction {
-                val updateDifficult = CodeChallengeDto(
-                    "test name1",
-                    "test description",
-                    ChallengeSources.CodeWars,
-                    "3 kyu",
-                    "print('hello world')"
-                )
-
-                val challengeDto = challengeService.updateChallenge(userDto.username, updateDifficult)
 
 
-                val challengeFromDb = CodeChallengeEntity.find {
-                    CodeChallengesTable.name eq codeChallenge1.name
+                val challengeDto = challengeService.updateChallenge(userData.username, updateData)
+
+
+                val challengeFromDb = Challenge.find {
+                    CodeChallengesTable.name eq updateData.name
                 }.first().toDto()
 
 
-                assertNotEquals(codeChallenge1, challengeDto)
+                assertNotEquals(challengeBeforeUpdate, challengeDto)
                 assertEquals(challengeDto, challengeFromDb)
             }
         }
@@ -116,19 +64,13 @@ class ChallengeServiceTest {
     fun deleteCodeChallenge() {
         runBlocking {
             val mustNull = suspendTransaction {
-                challengeService.deleteChallenge(userDto.username, codeChallenge.name)
-                CodeChallengeEntity.find {
-                    CodeChallengesTable.name eq codeChallenge.name
+                challengeService.deleteChallenge(userData.username, existedChallenge.name)
+                Challenge.find {
+                    CodeChallengesTable.name eq existedChallenge.name
                 }.firstOrNull()
             }
             assertEquals(null, mustNull)
         }
-    }
-
-    @AfterEach
-    fun clear(): Unit = transaction {
-        CodeChallengesTable.deleteAll()
-        UsersTable.deleteAll()
     }
 
 }

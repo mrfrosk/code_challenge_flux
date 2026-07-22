@@ -1,7 +1,8 @@
 package com.code_challenge_flux.api
 
 import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.UserDto
-import com.code_challenge_flux.core.services.database.entities.UserEntity
+import com.code_challenge_flux.core.fixtures.UsersFixture
+import com.code_challenge_flux.core.services.database.entities.User
 import com.code_challenge_flux.core.services.database.tables.UsersTable
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
@@ -36,42 +37,28 @@ import kotlin.test.Test
 @SpringBootTest(
     webEnvironment = WebEnvironment.DEFINED_PORT,
 )
-class UserControllerTest {
+class UserControllerTest: UsersFixture() {
 
-    val client = HttpClient(CIO)
-    val address = "http://localhost:8080${Mapping.USER}"
-    val user1 = UserDto("email", "test", "123")
-    val updateData = UserDto("email", "test1", "124")
-    val userId: java.util.UUID = java.util.UUID.randomUUID()
-
-
-    @BeforeEach
-    fun init(): Unit = transaction {
-        UsersTable.deleteAll()
-        UserEntity.new(userId) {
-            email = user1.email
-            username = user1.username
-            password = user1.password
-        }
-    }
+    private val client = HttpClient(CIO)
+    private val address = "http://localhost:8080${Mapping.USER}"
 
     @Test
     fun getUserTest() = runBlocking {
-        val request = client.get("$address/${user1.username}")
+        val request = client.get("$address/${existedUser.username}")
         val user =
             Json.decodeFromString<com.code.challenge_flux.data.database.com.code_challenge_flux.dto.IdUserDto>(
                 request.bodyAsText()
             )
         val userDto =
             UserDto(user.email, user.username, user.password)
-        kotlin.test.assertEquals(user1, userDto)
+        kotlin.test.assertEquals(existedUser, userDto)
     }
 
     @OptIn(io.ktor.utils.io.InternalAPI::class)
     @Test
     fun updateUser() = runBlocking {
 
-        val request = client.put("$address/${user1.username}") {
+        val request = client.put("$address/${existedUser.username}") {
             body =
                 Json.encodeToString(updateData)
         }
@@ -84,15 +71,10 @@ class UserControllerTest {
 
     @Test
     fun deleteUser(): Unit = runBlocking {
-        client.delete("$address/${user1.username}")
+        client.delete("$address/${existedUser.username}")
         assertThrows<EntityNotFoundException> {
-                    transaction { UserEntity.Companion[userId] }
+            transaction { User.Companion[userId] }
                 }
     }
-    
 
-    @AfterEach
-    fun clear(): Unit = transaction {
-        UsersTable.deleteAll()
-    }
 }

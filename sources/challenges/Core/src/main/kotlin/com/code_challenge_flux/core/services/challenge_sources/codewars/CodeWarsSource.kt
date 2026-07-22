@@ -6,21 +6,19 @@ import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.codewar
 import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.codewars.ChallengeSources
 import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.codewars.ChallengesDto
 import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.codewars.ShortChallengeDto
-import com.code_challenge_flux.core.services.database.entities.CodeChallengeEntity
-import com.code_challenge_flux.core.services.database.entities.UserEntity
+import com.code_challenge_flux.core.services.challenge_sources.IChallengeSource
+import com.code_challenge_flux.core.services.database.entities.Challenge
+import com.code_challenge_flux.core.services.database.entities.User
 import com.code_challenge_flux.core.services.database.tables.CodeChallengesTable
 import com.code_challenge_flux.core.services.database.tables.UsersTable
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
-import io.ktor.client.request.get
-import io.ktor.client.statement.bodyAsText
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.v1.core.eq
 import org.springframework.stereotype.Service
-import com.code_challenge_flux.core.services.challenge_sources.IChallengeSource
-import java.util.UUID
-
-
+import java.util.*
 
 
 @Service
@@ -47,7 +45,7 @@ class CodeWarsSource: IChallengeSource {
     }
 
     override suspend fun getChallenges(username: String, offset: Int): List<CodeChallengeDto> {
-        val user = UserEntity.find { UsersTable.username eq username }.first()
+        val user = User.find { UsersTable.username eq username }.first()
         val challenges = getChallengesInfo(username)
         val lastChallenge = getLastChallenge(user.id.value)
         val lastSavedIndex = if (lastChallenge == null) {
@@ -67,7 +65,7 @@ class CodeWarsSource: IChallengeSource {
         }
     }
     private fun getLastChallenge(userId: UUID): CodeChallengeDto? {
-        val challenge = CodeChallengeEntity.find { CodeChallengesTable.userId eq userId }.lastOrNull()
+        val challenge = Challenge.find { CodeChallengesTable.userId eq userId }.lastOrNull()
         return challenge?.toDto()
     }
 
