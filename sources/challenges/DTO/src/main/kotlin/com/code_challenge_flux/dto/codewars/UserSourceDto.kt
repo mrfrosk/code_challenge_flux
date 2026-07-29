@@ -12,5 +12,5 @@ data class UserSourceDto(
     val leaderboardPosition: Int?,
     val skills: List<String>?,
     val ranks: RanksDto,
-    val codeChallenges: Map<String, Int>
+    val codeChallenges: UserChallengesInfo
 )
