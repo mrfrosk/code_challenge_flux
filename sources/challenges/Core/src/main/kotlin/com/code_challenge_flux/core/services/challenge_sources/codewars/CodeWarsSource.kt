@@ -65,48 +65,44 @@ class CodeWarsSource : IChallengeSource {
          */
         val pages = ceil(totalCompiled / 200F).toInt()
         val challenges = (0 until pages).asFlow().flatMapMerge(concurrency = 10) { pageIdx ->
-            runCatching {
+            val pages = getResponseOrEmpty<ChallengesDto> {
                 client.get("$userUrl/$username/$challengeUrl") {
                     parameter("page", pageIdx)
                 }
-            }.onFailure { exception ->
-                if (exception is CancellationException) throw exception
-                /**
-                 * Заменить на нормальное логирование
-                 */
-                println(exception.message)
-            }.getOrNull()?.let { response ->
-                if (response.status.isSuccess()) response.body<ChallengesDto>().data.asFlow() else emptyFlow()
-            } ?: emptyFlow()
-
-
-        }.flatMapMerge(concurrency = 10) {
-            flow {
-                runCatching {
-                    client.get("$challengeInfoUrl/${it.id}")
-                }.onFailure { exception ->
-                    if (exception is CancellationException) throw exception
-                    /**
-                     * Заменить на нормальное логирование
-                     */
-                    println(exception.message)
-                }.getOrNull()?.let { response ->
-                    if (response.status.isSuccess()) {
-                        val challenge = response.body<ChallengeDto>()
+            }?.data?.asFlow() ?: emptyFlow()
+            pages.flatMapMerge(concurrency = 10) {
+                flow {
+                    getResponseOrEmpty<ChallengeDto> {
+                        client.get("$challengeInfoUrl/${it.id}")
+                    }?.let { challenge ->
                         emit(toCodeChallenge(challenge))
                     }
+
                 }
             }
         }
         emitAll(challenges)
     }.flowOn(Dispatchers.IO)
 
-    private suspend inline fun <reified T> getResponseOrEmpty(response: HttpResponse): T?{
+    private suspend inline fun <reified T> getResponseOrEmpty(block: () -> HttpResponse): T? {
+        val response = try {
+            block()
+        } catch (e: CancellationException) {
+            throw e
+        } catch (_: Exception) {
+            println("добавить правильное логирование")
+            return null
+        }
+        response.status.isSuccess().let { isSuccess ->
+            if (!isSuccess) {
+                println("добавить правильное логирование")
+                return null
+            }
+        }
         return try {
             response.body<T>()
-        }catch (e: CancellationException){
-            throw e
-        }catch (_: Throwable){
+        } catch (_: Exception) {
+            println("добавить правильное логирование")
             null
         }
     }
@@ -150,4 +146,37 @@ class CodeWarsSource : IChallengeSource {
         challenge.rank.name,
         ""
     )
+
+    //            runCatching {
+//                client.get("$userUrl/$username/$challengeUrl") {
+//                    parameter("page", pageIdx)
+//                }
+//            }.onFailure { exception ->
+//                if (exception is CancellationException) throw exception
+//                /**
+//                 * Заменить на нормальное логирование
+//                 */
+//                println(exception.message)
+//            }.getOrNull()?.let { response ->
+//                if (response.status.isSuccess()) response.body<ChallengesDto>().data.asFlow() else emptyFlow()
+//            } ?: emptyFlow()
+//                .flatMapMerge(concurrency = 10) {
+//            flow {
+//                runCatching {
+//                    client.get("$challengeInfoUrl/${it.id}")
+//                }.onFailure { exception ->
+//                    if (exception is CancellationException) throw exception
+//                    /**
+//                     * Заменить на нормальное логирование
+//                     */
+//                    println(exception.message)
+//                }.getOrNull()?.let { response ->
+//                    if (response.status.isSuccess()) {
+//                        val challenge = response.body<ChallengeDto>()
+//                        emit(toCodeChallenge(challenge))
+//                    }
+//                }
+//            }
+//        }
+//        emitAll(challenges)
 }
