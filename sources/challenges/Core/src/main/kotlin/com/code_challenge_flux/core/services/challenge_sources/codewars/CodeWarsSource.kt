@@ -71,7 +71,7 @@ class CodeWarsSource : IChallengeSource {
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun loadChallenges(username: String): Flow<CodeChallengeDto> = flow {
+    override suspend fun getChallenges(username: String): Flow<CodeChallengeDto> = flow {
         val request = client.get("$userUrl/$username")
         val totalCompiled = request.body<UserSourceDto>()
             .codeChallenges.totalCompleted
@@ -106,7 +106,6 @@ class CodeWarsSource : IChallengeSource {
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-//            throw e
             println(e.message)
             println("добавить правильное логирование")
             return null
@@ -120,7 +119,6 @@ class CodeWarsSource : IChallengeSource {
         return try {
             response.body<T>()
         } catch (e: Exception) {
-//            throw e
             println(e.message)
             println("добавить правильное логирование, ${e.javaClass.name}")
             null
@@ -133,26 +131,6 @@ class CodeWarsSource : IChallengeSource {
         return toCodeChallenge(body)
     }
 
-    override suspend fun getChallenges(username: String, offset: Int): List<CodeChallengeDto> {
-        val user = UserEntity.find { UsersTable.username eq username }.first()
-        val challenges = getChallengesInfo(username)
-        val lastChallenge = getLastChallenge(user.id.value)
-        val lastSavedIndex = if (lastChallenge == null) {
-            0
-        } else {
-            val challenge = challenges.find { it.name == lastChallenge.name }
-            challenges.indexOf(challenge)
-        }
-        return if (challenges.size - lastSavedIndex <= offset) {
-            challenges.subList(lastSavedIndex, challenges.size).map {
-                getChallenge(it.id)
-            }
-        } else {
-            challenges.subList(lastSavedIndex, lastSavedIndex + offset).map {
-                getChallenge(it.id)
-            }
-        }
-    }
 
     private fun getLastChallenge(userId: UUID): CodeChallengeDto? {
         val challenge = CodeChallengeEntity.find { CodeChallengesTable.userId eq userId }.lastOrNull()
@@ -166,37 +144,4 @@ class CodeWarsSource : IChallengeSource {
         challenge.rank.name,
         ""
     )
-
-    //            runCatching {
-//                client.get("$userUrl/$username/$challengeUrl") {
-//                    parameter("page", pageIdx)
-//                }
-//            }.onFailure { exception ->
-//                if (exception is CancellationException) throw exception
-//                /**
-//                 * Заменить на нормальное логирование
-//                 */
-//                println(exception.message)
-//            }.getOrNull()?.let { response ->
-//                if (response.status.isSuccess()) response.body<ChallengesDto>().data.asFlow() else emptyFlow()
-//            } ?: emptyFlow()
-//                .flatMapMerge(concurrency = 10) {
-//            flow {
-//                runCatching {
-//                    client.get("$challengeInfoUrl/${it.id}")
-//                }.onFailure { exception ->
-//                    if (exception is CancellationException) throw exception
-//                    /**
-//                     * Заменить на нормальное логирование
-//                     */
-//                    println(exception.message)
-//                }.getOrNull()?.let { response ->
-//                    if (response.status.isSuccess()) {
-//                        val challenge = response.body<ChallengeDto>()
-//                        emit(toCodeChallenge(challenge))
-//                    }
-//                }
-//            }
-//        }
-//        emitAll(challenges)
 }

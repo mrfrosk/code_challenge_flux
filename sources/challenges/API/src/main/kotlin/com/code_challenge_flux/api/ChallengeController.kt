@@ -9,7 +9,9 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import com.code_challenge_flux.core.services.ChallengeService
 import com.code_challenge_flux.core.services.challenge_sources.codewars.CodeWarsSource
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
 import org.springframework.http.MediaType
 
 @RestController
@@ -23,19 +25,20 @@ class ChallengeController {
     private lateinit var codeWarsSource: CodeWarsSource
 
 
-    @GetMapping(produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    suspend fun test(): Flow<CodeChallengeDto> {
-        return codeWarsSource.loadChallenges("mrfrosk")
-    }
-
-    @PostMapping("/{source}/load/{username}")
-    suspend fun updateFromCodeWars(
+    @PostMapping("/{source}/load/{username}", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    suspend fun loadFromSource(
         @PathVariable source: ChallengeSources,
         @PathVariable username: String
-    ) {
-        return suspendTransaction {
-            challengeService.addChallengeFromSource(username, source)
+    ): ResponseEntity<*> {
+        supervisorScope {
+            launch(Dispatchers.IO) {
+                suspendTransaction {
+                    challengeService.loadFromSource(username, source)
+                }
+            }
         }
+        return ResponseEntity.ok(null)
+
     }
 
     @GetMapping("/{source}/{username}/{name}")
@@ -50,7 +53,7 @@ class ChallengeController {
     }
 
     @GetMapping("/{source}/{username}", produces = ["application/json"])
-    suspend fun getCodeWarsChallenges(
+    suspend fun getChallenges(
         @PathVariable("source") source: ChallengeSources,
         @PathVariable username: String,
     ): ResponseEntity<*> {
@@ -61,7 +64,7 @@ class ChallengeController {
     }
 
     @GetMapping("/{username}", produces = ["application/json"])
-    suspend fun getCodeWarsChallenges(
+    suspend fun getChallenges(
         @PathVariable username: String,
     ): ResponseEntity<*> {
         val challenge = suspendTransaction {

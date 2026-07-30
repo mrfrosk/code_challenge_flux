@@ -5,6 +5,9 @@ import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.CodeCha
 import com.code_challenge_flux.core.services.database.entities.CodeChallengeEntity
 import com.code_challenge_flux.core.services.database.entities.UserEntity
 import com.code_challenge_flux.core.services.database.tables.CodeChallengesTable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.andIfNotNull
 import org.jetbrains.exposed.v1.core.eq
@@ -115,10 +118,14 @@ class ChallengeService {
      * @param username имя пользователя
      * @param source источник
      */
-    suspend fun addChallengeFromSource(username: String, source: ChallengeSources, offset: Int = 5) {
+    suspend fun loadFromSource(username: String, source: ChallengeSources) {
         val source = sourceManager.getSource(source)
-        source.getChallenges(username, offset).forEach {
-            createChallenge(username, it)
+        coroutineScope {
+            source.getChallenges(username).collect {
+                launch(Dispatchers.IO) {
+                    createChallenge(username, it)
+                }
+            }
         }
     }
 
