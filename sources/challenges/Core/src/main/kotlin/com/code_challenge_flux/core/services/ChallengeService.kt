@@ -7,6 +7,8 @@ import com.code_challenge_flux.core.services.database.entities.UserEntity
 import com.code_challenge_flux.core.services.database.tables.CodeChallengesTable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.andIfNotNull
@@ -78,13 +80,14 @@ class ChallengeService {
      * @param username имя пользователя
      * @param source исчтоник задач
      */
-    suspend fun getChallenges(username: String, source: ChallengeSources? = null): List<CodeChallengeDto> {
+    suspend fun getChallenges(username: String, source: ChallengeSources? = null): Flow<CodeChallengeDto> {
+
         val userId = userService.getUser(username).id
         return CodeChallengeEntity.find {
             (CodeChallengesTable.userId eq userId) andIfNotNull (source?.let {
                 CodeChallengesTable.challengeSource eq source
             })
-        }.map { it.toDto() }
+        }.map { it.toDto() }.asFlow()
     }
 
     /**

@@ -52,7 +52,7 @@ class ChallengeController {
         }
     }
 
-    @GetMapping("/{source}/{username}", produces = ["application/json"])
+    @GetMapping("/{source}/{username}", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     suspend fun getChallenges(
         @PathVariable("source") source: ChallengeSources,
         @PathVariable username: String,
