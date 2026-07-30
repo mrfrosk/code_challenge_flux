@@ -20,6 +20,7 @@ import org.jetbrains.exposed.v1.core.eq
 import org.springframework.stereotype.Service
 import com.code_challenge_flux.core.services.challenge_sources.IChallengeSource
 import io.ktor.client.call.body
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.request.parameter
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.isSuccess
@@ -35,6 +36,9 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import java.util.UUID
 import kotlin.math.ceil
+import io.ktor.client.plugins.HttpTimeoutConfig.Companion.INFINITE_TIMEOUT_MS
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.serialization.kotlinx.json.json
 
 
 @Service
@@ -42,7 +46,19 @@ class CodeWarsSource : IChallengeSource {
     private val userUrl = "https://www.codewars.com/api/v1/users"
     private val challengeUrl = "code-challenges/completed"
     private val challengeInfoUrl = "https://www.codewars.com/api/v1/code-challenges/"
-    private val client = HttpClient(CIO)
+    private val client = HttpClient(CIO){
+        install(ContentNegotiation) {
+            json(Json {
+                ignoreUnknownKeys = true
+                prettyPrint = true
+            })
+        }
+        install(HttpTimeout) {
+            requestTimeoutMillis = INFINITE_TIMEOUT_MS
+            socketTimeoutMillis = 5_000
+            connectTimeoutMillis = 20_000
+        }
+    }
 
     override suspend fun getUser(username: String): UserDto {
         TODO("пока не решил, должен ли существовать этот метод в принципе")
@@ -56,8 +72,8 @@ class CodeWarsSource : IChallengeSource {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun loadChallenges(username: String): Flow<CodeChallengeDto> = flow {
-        val totalCompiled = client.get("$userUrl/$username")
-            .body<UserSourceDto>()
+        val request = client.get("$userUrl/$username")
+        val totalCompiled = request.body<UserSourceDto>()
             .codeChallenges.totalCompleted
 
         /**
@@ -89,20 +105,24 @@ class CodeWarsSource : IChallengeSource {
             block()
         } catch (e: CancellationException) {
             throw e
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+//            throw e
+            println(e.message)
             println("добавить правильное логирование")
             return null
         }
         response.status.isSuccess().let { isSuccess ->
             if (!isSuccess) {
-                println("добавить правильное логирование")
+                println("Не Success")
                 return null
             }
         }
         return try {
             response.body<T>()
-        } catch (_: Exception) {
-            println("добавить правильное логирование")
+        } catch (e: Exception) {
+//            throw e
+            println(e.message)
+            println("добавить правильное логирование, ${e.javaClass.name}")
             null
         }
     }

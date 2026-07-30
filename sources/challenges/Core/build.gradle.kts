@@ -30,7 +30,8 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-reactor", coroutineVersion)
     implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-core", coroutineVersion)
-
+    implementation("io.ktor:ktor-serialization-kotlinx-json:${ktorVersion}")
+    implementation("io.ktor:ktor-client-content-negotiation:${ktorVersion}")
     /** exposed*/
     implementation("org.jetbrains.exposed:exposed-core")
     implementation("org.jetbrains.exposed:exposed-jdbc")

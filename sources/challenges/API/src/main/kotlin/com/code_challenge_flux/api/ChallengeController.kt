@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import com.code_challenge_flux.core.services.ChallengeService
+import com.code_challenge_flux.core.services.challenge_sources.codewars.CodeWarsSource
+import kotlinx.coroutines.flow.Flow
+import org.springframework.http.MediaType
 
 @RestController
 @RequestMapping(Mapping.CHALLENGE)
@@ -15,6 +18,15 @@ class ChallengeController {
 
     @Autowired
     private lateinit var challengeService: ChallengeService
+
+    @Autowired
+    private lateinit var codeWarsSource: CodeWarsSource
+
+
+    @GetMapping(produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    suspend fun test(): Flow<CodeChallengeDto> {
+        return codeWarsSource.loadChallenges("mrfrosk")
+    }
 
     @PostMapping("/{source}/load/{username}")
     suspend fun updateFromCodeWars(
