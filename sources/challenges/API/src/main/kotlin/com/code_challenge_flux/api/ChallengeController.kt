@@ -57,19 +57,17 @@ class ChallengeController {
         @PathVariable("source") source: ChallengeSources,
         @PathVariable username: String,
     ): ResponseEntity<*> {
-        val challenge = suspendTransaction {
-            challengeService.getChallenges(username, source)
-        }
+        val challenge = challengeService.getChallenges(username, source)
+
         return ResponseEntity.ok(challenge)
     }
 
-    @GetMapping("/{username}", produces = ["application/json"])
+    @GetMapping("/{username}", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     suspend fun getChallenges(
         @PathVariable username: String,
     ): ResponseEntity<*> {
-        val challenge = suspendTransaction {
-            challengeService.getChallenges(username)
-        }
+        val challenge = challengeService.getChallenges(username)
+
         return ResponseEntity.ok(challenge)
     }
 

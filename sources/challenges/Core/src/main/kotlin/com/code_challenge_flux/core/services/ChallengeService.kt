@@ -1,18 +1,20 @@
 package com.code_challenge_flux.core.services
 
-import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.codewars.ChallengeSources
 import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.CodeChallengeDto
+import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.codewars.ChallengeSources
 import com.code_challenge_flux.core.services.database.entities.CodeChallengeEntity
 import com.code_challenge_flux.core.services.database.entities.UserEntity
 import com.code_challenge_flux.core.services.database.tables.CodeChallengesTable
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.andIfNotNull
 import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.jdbc.selectAll
+import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -76,18 +78,25 @@ class ChallengeService {
 
 
     /**
-     * Возвращает список задач, если источник не указан, то возращает все задачи
+     * Возвращает поток задач, если источник не указан, то возвращает все задачи
      * @param username имя пользователя
-     * @param source исчтоник задач
+     * @param source источник задач
      */
-    suspend fun getChallenges(username: String, source: ChallengeSources? = null): Flow<CodeChallengeDto> {
+        @OptIn(ExperimentalCoroutinesApi::class)
+    suspend fun getChallenges(username: String, source: ChallengeSources? = null) = channelFlow {
+        suspendTransaction {
+            val userId = userService.getUser(username).id
 
-        val userId = userService.getUser(username).id
-        return CodeChallengeEntity.find {
-            (CodeChallengesTable.userId eq userId) andIfNotNull (source?.let {
-                CodeChallengesTable.challengeSource eq source
-            })
-        }.map { it.toDto() }.asFlow()
+           val query = CodeChallengesTable.selectAll().where {
+                (CodeChallengesTable.userId eq userId) andIfNotNull source?.let {
+                    CodeChallengesTable.challengeSource eq source
+                }
+            }
+            query.fetchSize(100)
+            CodeChallengeEntity.wrapRows(query).forEach {
+                send(it.toDto())
+            }
+        }
     }
 
     /**
@@ -131,7 +140,9 @@ class ChallengeService {
             }
         }
     }
-
-
 }
+
+
+
+
 
