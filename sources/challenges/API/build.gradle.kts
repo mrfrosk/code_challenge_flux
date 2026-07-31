@@ -49,6 +49,7 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation(rootProject.project("sources:challenges:DTO"))
     implementation(rootProject.project("sources:challenges:Core"))
+    testImplementation(testFixtures(rootProject.project("sources:challenges:Core")))
 }
 
 kotlin {
