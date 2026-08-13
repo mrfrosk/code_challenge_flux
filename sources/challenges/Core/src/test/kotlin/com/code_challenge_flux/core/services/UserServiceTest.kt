@@ -3,7 +3,7 @@ package com.code_challenge_flux.core.services
 import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.LoginDto
 import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.UserDto
 import com.code_challenge_flux.core.fixtures.UsersFixture
-import com.code_challenge_flux.core.services.database.entities.User
+import com.code_challenge_flux.core.services.database.entities.UserEntity
 import com.code_challenge_flux.core.services.database.tables.UsersTable
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.v1.core.eq
@@ -55,7 +55,7 @@ class UserServiceTest : UsersFixture() {
 
             val user =
                 suspendTransaction {
-                    User.find { UsersTable.email eq updateData.email }.first().toDto()
+                    UserEntity.find { UsersTable.email eq updateData.email }.first().toDto()
                 }
             val userDto = UserDto(user.email, user.username, user.password)
             assertNotEquals(existedUser, userDto)
@@ -68,7 +68,7 @@ class UserServiceTest : UsersFixture() {
         val isNull = runBlocking {
             suspendTransaction {
                 userService.deleteUser(existedUser.username)
-                User.find { UsersTable.email eq existedUser.email }.firstOrNull()
+                UserEntity.find { UsersTable.email eq existedUser.email }.firstOrNull()
             }
         }
 

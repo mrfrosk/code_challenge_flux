@@ -57,7 +57,7 @@ class ChallengeController {
         @PathVariable("source") source: ChallengeSources,
         @PathVariable username: String,
     ): ResponseEntity<*> {
-        val challenge = challengeService.getChallenges(username, source)
+        val challenge = challengeService.getChallengesM2(username, source)
 
         return ResponseEntity.ok(challenge)
     }

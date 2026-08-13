@@ -3,7 +3,7 @@ package com.code_challenge_flux.core.services
 import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.IdUserDto
 import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.LoginDto
 import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.UserDto
-import com.code_challenge_flux.core.services.database.entities.User
+import com.code_challenge_flux.core.services.database.entities.UserEntity
 import com.code_challenge_flux.core.services.database.tables.UsersTable
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
@@ -23,7 +23,7 @@ class UserService {
     }
 
     suspend fun getUser(userId: UUID): IdUserDto {
-        return User.findById(userId)?.toDto()
+        return UserEntity.findById(userId)?.toDto()
             ?: throw NoSuchElementException("Пользователя с id $userId не сущесвует")
     }
 
@@ -32,7 +32,7 @@ class UserService {
      */
 
     suspend fun isExists(loginDto: LoginDto): Boolean {
-        return User.find {
+        return UserEntity.find {
             (UsersTable.email eq loginDto.email) and (UsersTable.password eq loginDto.password)
         }.firstOrNull() != null
     }
@@ -42,7 +42,7 @@ class UserService {
      * @param userDto данные пользователя
      */
     suspend fun createUser(userDto: UserDto): IdUserDto {
-        return User.new {
+        return UserEntity.new {
             email = userDto.email
             username = userDto.username
             password = userDto.password
@@ -74,7 +74,7 @@ class UserService {
      * Проверяет существование пользователя по email
      * @param email электронная почта пользователя
      */
-    suspend fun isExists(email: String) = User.find {
+    suspend fun isExists(email: String) = UserEntity.find {
         UsersTable.email eq email
     }.firstOrNull() != null
 
@@ -84,8 +84,8 @@ class UserService {
      * @throws NoSuchElementException
      */
 
-    private suspend fun findUser(username: String): User {
-        return User.find {
+    private suspend fun findUser(username: String): UserEntity {
+        return UserEntity.find {
             UsersTable.username eq username
         }.firstOrNull() ?: throw NoSuchElementException("Пользователя с именем $username не сущесвует")
     }

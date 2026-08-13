@@ -1,7 +1,7 @@
 package com.code_challenge_flux.core.services
 
 import com.code_challenge_flux.core.fixtures.ChallengeFixture
-import com.code_challenge_flux.core.services.database.entities.Challenge
+import com.code_challenge_flux.core.services.database.entities.CodeChallengeEntity
 import com.code_challenge_flux.core.services.database.tables.CodeChallengesTable
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.v1.core.eq
@@ -49,7 +49,7 @@ class ChallengeServiceTest : ChallengeFixture() {
                 val challengeDto = challengeService.updateChallenge(userData.username, updateData)
 
 
-                val challengeFromDb = Challenge.find {
+                val challengeFromDb = CodeChallengeEntity.find {
                     CodeChallengesTable.name eq updateData.name
                 }.first().toDto()
 
@@ -65,7 +65,7 @@ class ChallengeServiceTest : ChallengeFixture() {
         runBlocking {
             val mustNull = suspendTransaction {
                 challengeService.deleteChallenge(userData.username, existedChallenge.name)
-                Challenge.find {
+                CodeChallengeEntity.find {
                     CodeChallengesTable.name eq existedChallenge.name
                 }.firstOrNull()
             }

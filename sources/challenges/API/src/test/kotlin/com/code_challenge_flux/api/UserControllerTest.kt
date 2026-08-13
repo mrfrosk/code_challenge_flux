@@ -2,8 +2,7 @@ package com.code_challenge_flux.api
 
 import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.UserDto
 import com.code_challenge_flux.core.fixtures.UsersFixture
-import com.code_challenge_flux.core.services.database.entities.User
-import com.code_challenge_flux.core.services.database.tables.UsersTable
+import com.code_challenge_flux.core.services.database.entities.UserEntity
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
@@ -11,10 +10,7 @@ import io.ktor.client.statement.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.v1.dao.exceptions.EntityNotFoundException
-import org.jetbrains.exposed.v1.jdbc.deleteAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.context.SpringBootTest
@@ -73,7 +69,7 @@ class UserControllerTest: UsersFixture() {
     fun deleteUser(): Unit = runBlocking {
         client.delete("$address/${existedUser.username}")
         assertThrows<EntityNotFoundException> {
-            transaction { User.Companion[userId] }
+            transaction { UserEntity.Companion[userId] }
                 }
     }
 

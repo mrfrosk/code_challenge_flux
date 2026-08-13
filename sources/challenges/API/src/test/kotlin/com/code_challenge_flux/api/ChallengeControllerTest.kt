@@ -2,9 +2,8 @@ package com.code_challenge_flux.api
 
 import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.CodeChallengeDto
 import com.code_challenge_flux.core.fixtures.ChallengeFixture
-import com.code_challenge_flux.core.services.database.entities.Challenge
-import com.code_challenge_flux.core.services.database.entities.Challenge.Companion
-import com.code_challenge_flux.core.services.database.entities.User
+import com.code_challenge_flux.core.services.database.entities.CodeChallengeEntity
+import com.code_challenge_flux.core.services.database.entities.CodeChallengeEntity.Companion
 import com.code_challenge_flux.core.services.database.tables.CodeChallengesTable
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
@@ -15,7 +14,6 @@ import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.dao.exceptions.EntityNotFoundException
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
@@ -36,7 +34,7 @@ class ChallengeControllerTest: ChallengeFixture() {
     fun createChallengeTest(): Unit = kotlinx.coroutines.runBlocking {
 
         val challenge = transaction {
-            Challenge.find {
+            CodeChallengeEntity.find {
                 CodeChallengesTable.name eq existedChallenge.name
             }.firstOrNull()?.toDto()
         }
