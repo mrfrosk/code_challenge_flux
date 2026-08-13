@@ -2,44 +2,23 @@ package com.code_challenge_flux.core.services.challenge_sources.codewars
 
 import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.CodeChallengeDto
 import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.UserDto
-import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.codewars.*
+import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.codewars.ChallengeDto
+import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.codewars.ChallengeSources
+import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.codewars.ChallengesDto
+import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.codewars.ShortChallengeDto
 import com.code_challenge_flux.core.services.challenge_sources.IChallengeSource
-import com.code_challenge_flux.core.services.database.entities.CodeChallengeEntity
+import com.code_challenge_flux.core.services.database.entities.Challenge
+import com.code_challenge_flux.core.services.database.entities.User
 import com.code_challenge_flux.core.services.database.tables.CodeChallengesTable
+import com.code_challenge_flux.core.services.database.tables.UsersTable
 import io.ktor.client.*
-import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.HttpTimeoutConfig.Companion.INFINITE_TIMEOUT_MS
-import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.flatMapMerge
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.v1.core.eq
 import org.springframework.stereotype.Service
 import java.util.*
-import kotlin.collections.List
-import kotlin.collections.find
-import kotlin.collections.lastOrNull
-import kotlin.math.ceil
-import kotlin.ranges.lastOrNull
-import kotlin.ranges.until
-import kotlin.sequences.find
-import kotlin.sequences.lastOrNull
-import kotlin.text.find
-import kotlin.text.lastOrNull
 
 
 @Service
@@ -132,9 +111,28 @@ class CodeWarsSource : IChallengeSource {
         return toCodeChallenge(body)
     }
 
-
+    override suspend fun getChallenges(username: String, offset: Int): List<CodeChallengeDto> {
+        val user = User.find { UsersTable.username eq username }.first()
+        val challenges = getChallengesInfo(username)
+        val lastChallenge = getLastChallenge(user.id.value)
+        val lastSavedIndex = if (lastChallenge == null) {
+            0
+        } else {
+            val challenge = challenges.find { it.name == lastChallenge.name }
+            challenges.indexOf(challenge)
+        }
+        return if (challenges.size - lastSavedIndex <= offset) {
+            challenges.subList(lastSavedIndex, challenges.size).map {
+                getChallenge(it.id)
+            }
+        } else {
+            challenges.subList(lastSavedIndex, lastSavedIndex + offset).map {
+                getChallenge(it.id)
+            }
+        }
+    }
     private fun getLastChallenge(userId: UUID): CodeChallengeDto? {
-        val challenge = CodeChallengeEntity.find { CodeChallengesTable.userId eq userId }.lastOrNull()
+        val challenge = Challenge.find { CodeChallengesTable.userId eq userId }.lastOrNull()
         return challenge?.toDto()
     }
 
