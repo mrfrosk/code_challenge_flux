@@ -2,28 +2,20 @@ package com.code_challenge_flux.core.services.challenge_sources.codewars
 
 import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.CodeChallengeDto
 import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.UserDto
-import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.codewars.ChallengeDto
-import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.codewars.ChallengeSources
-import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.codewars.ChallengesDto
-import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.codewars.ShortChallengeDto
-import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.codewars.UserSourceDto
-import com.code_challenge_flux.core.services.database.entities.CodeChallengeEntity
-import com.code_challenge_flux.core.services.database.entities.UserEntity
-import com.code_challenge_flux.core.services.database.tables.CodeChallengesTable
-import com.code_challenge_flux.core.services.database.tables.UsersTable
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
-import io.ktor.client.request.get
-import io.ktor.client.statement.bodyAsText
-import kotlinx.serialization.json.Json
-import org.jetbrains.exposed.v1.core.eq
-import org.springframework.stereotype.Service
+import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.codewars.*
 import com.code_challenge_flux.core.services.challenge_sources.IChallengeSource
-import io.ktor.client.call.body
-import io.ktor.client.plugins.HttpTimeout
-import io.ktor.client.request.parameter
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.isSuccess
+import com.code_challenge_flux.core.services.database.entities.CodeChallengeEntity
+import com.code_challenge_flux.core.services.database.tables.CodeChallengesTable
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.HttpTimeoutConfig.Companion.INFINITE_TIMEOUT_MS
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -34,11 +26,20 @@ import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import java.util.UUID
+import kotlinx.serialization.json.Json
+import org.jetbrains.exposed.v1.core.eq
+import org.springframework.stereotype.Service
+import java.util.*
+import kotlin.collections.List
+import kotlin.collections.find
+import kotlin.collections.lastOrNull
 import kotlin.math.ceil
-import io.ktor.client.plugins.HttpTimeoutConfig.Companion.INFINITE_TIMEOUT_MS
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.serialization.kotlinx.json.json
+import kotlin.ranges.lastOrNull
+import kotlin.ranges.until
+import kotlin.sequences.find
+import kotlin.sequences.lastOrNull
+import kotlin.text.find
+import kotlin.text.lastOrNull
 
 
 @Service

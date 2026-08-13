@@ -1,14 +1,14 @@
 package com.code_challenge_flux.core.services
 
+import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.IdUserDto
 import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.LoginDto
 import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.UserDto
-import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.IdUserDto
 import com.code_challenge_flux.core.services.database.entities.UserEntity
 import com.code_challenge_flux.core.services.database.tables.UsersTable
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.springframework.stereotype.Service
-import java.util.UUID
+import java.util.*
 
 @Service
 class UserService {

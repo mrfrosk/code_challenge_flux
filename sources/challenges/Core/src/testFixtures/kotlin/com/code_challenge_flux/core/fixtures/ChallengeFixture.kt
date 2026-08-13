@@ -3,12 +3,14 @@ package com.code_challenge_flux.core.fixtures
 import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.CodeChallengeDto
 import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.UserDto
 import com.code.challenge_flux.data.database.com.code_challenge_flux.dto.codewars.ChallengeSources
-import com.code_challenge_flux.core.services.database.entities.Challenge
-import com.code_challenge_flux.core.services.database.entities.User
+import com.code_challenge_flux.core.services.database.entities.CodeChallengeEntity
+import com.code_challenge_flux.core.services.database.entities.UserEntity
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import org.junit.jupiter.api.BeforeEach
 import java.util.*
-
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
+@OptIn(ExperimentalUuidApi::class)
 open class ChallengeFixture : BasicFixture() {
     protected val userId: UUID = UUID.randomUUID()
     protected val userData = UserDto("email", "test", "test")
@@ -27,7 +29,8 @@ open class ChallengeFixture : BasicFixture() {
         "print('hello world')"
     )
 
-    protected val challengeId: UUID = UUID.randomUUID()
+
+    protected val challengeId: Uuid = Uuid.generateV7()
 
 
     protected val updateData = CodeChallengeDto(
@@ -38,19 +41,19 @@ open class ChallengeFixture : BasicFixture() {
     override fun setup() {
         tearDown()
         transaction {
-            User.new(userId) {
+            UserEntity.new(userId) {
                 email = userData.email
                 username = userData.username
                 password = userData.password
             }
 
-            Challenge.new(challengeId) {
+            CodeChallengeEntity.new(challengeId) {
                 name = existedChallenge.name
                 description = existedChallenge.description
                 challengeSource = existedChallenge.challengeSource
                 difficult = existedChallenge.difficult
                 solution = existedChallenge.solution
-                user = User[userId]
+                user = UserEntity[userId]
             }
         }
     }
